@@ -1,10 +1,14 @@
 package com.example.shift.cosmocalendar.view;
 
 import android.annotation.TargetApi;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.provider.CalendarContract;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
@@ -63,8 +67,10 @@ import com.example.shift.cosmocalendar.view.customviews.CircleAnimationTextView;
 import com.example.shift.cosmocalendar.view.customviews.SquareTextView;
 import com.example.shift.cosmocalendar.view.delegate.MonthDelegate;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -102,6 +108,9 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
     //Listeners
     private OnMonthChangeListener onMonthChangeListener;
     private Month previousSelectedMonth;
+
+    //Contents
+    private List<CalendarSyncData> syncDataList = new ArrayList<>();
 
     private int lastVisibleMonthPosition = SettingsManager.DEFAULT_MONTH_COUNT / 2;
 
@@ -609,6 +618,59 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         monthAdapter.setDaySyncData(syncDataList);
         update();
     }
+
+    //set whether default calendar is synced or not.
+    public void turnOnSyncCalendar(){
+        calendarSync();
+        setDaySyncData(this.syncDataList);
+    }
+
+    //synchronize default calendar.
+    private void calendarSync() {
+        //https://zeph1e.tistory.com/42?category=338725
+        //https://www.youtube.com/watch?v=GihhIgDYCNo
+        this.syncDataList = new ArrayList<>();
+
+        final String[] EVENT_PROJECTION = new String[] {
+                CalendarContract.Events._ID,
+                CalendarContract.Events.TITLE,
+                CalendarContract.Events.DTSTART,
+                CalendarContract.Events.DTEND,
+                CalendarContract.Events.ALL_DAY,
+                CalendarContract.Events.DISPLAY_COLOR
+        };
+
+        Cursor cur = null;
+        ContentResolver cr = this.getContext().getContentResolver();
+        Uri uri = CalendarContract.Events.CONTENT_URI;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        //Submit the query and get a Cursor object back.
+        cur = cr.query(uri, EVENT_PROJECTION, null, null, null);
+        Log.e("Shift_calendar", "calendarSync");
+        // Use the cursor to step through the returned records
+        while(cur.moveToNext()){
+            int id;
+            String title = null;
+            Date dtstart = null;
+            Date dtend = null;
+            boolean allDay;
+            int color;
+
+            // Get the field values
+            id = cur.getInt(0);
+            title = cur.getString(1);
+            dtstart = new Date(cur.getLong(2));
+            dtend = new Date(cur.getLong(3));
+            allDay = (cur.getInt(4)==1) ? true : false;
+            color = cur.getInt(5);
+            Log.e("Shift___", "color : " + color);
+
+            CalendarSyncData syncData = new CalendarSyncData(id, title, dtstart, dtend, allDay, color);
+            syncDataList.add(syncData);
+        }
+        cur.close();
+    }
+
 
     public void setWeekendDays(Set<Long> weekendDays) {
         settingsManager.setWeekendDays(weekendDays);

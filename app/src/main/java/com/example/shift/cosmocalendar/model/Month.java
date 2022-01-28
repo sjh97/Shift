@@ -10,10 +10,12 @@ public class Month {
 
     private List<Day> days;
     private Day firstDay;
+    private boolean isSynced;
 
     public Month(Day firstDay, List<Day> days) {
         this.days = days;
         this.firstDay = firstDay;
+        this.isSynced = false;
     }
 
     public Day getFirstDay() {
@@ -22,6 +24,14 @@ public class Month {
 
     public void setFirstDay(Day firstDay) {
         this.firstDay = firstDay;
+    }
+
+    public void setSynced(boolean synced){
+        isSynced = synced;
+    }
+
+    public boolean isSynced(){
+        return this.isSynced;
     }
 
     public List<Day> getDays() {

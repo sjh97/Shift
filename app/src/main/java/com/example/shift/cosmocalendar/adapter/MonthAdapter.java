@@ -90,18 +90,13 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
     @Override
     public void onBindViewHolder(MonthHolder holder, int position) {
         final Month month = months.get(position);
-        monthDelegate.onBindMonthHolder(month, holder, position);
-    }
+        //Sync calendar data imported from default calendar app.
+        Log.e("Shift_time", (syncDataList.size()) + "");
+        if(!month.isSynced() && syncDataList != null){
+            attachSyncData(month);
+        }
 
-    @Override
-    public void onBindViewHolder(@NonNull MonthHolder holder, int position, @NonNull List<Object> payloads) {
-        Log.e("Shift___","onBindViewHolder(payload) : payloads.isEmpty? " + payloads.isEmpty() + " List<Month> : " + getItemCount());
-        if(payloads.isEmpty()){
-            onBindViewHolder(holder, position);
-        }
-        else{
-            Log.e("Shift___","onBindViewHolder(payload) : exist");
-        }
+        monthDelegate.onBindMonthHolder(month, holder, position);
     }
 
     @Override
@@ -130,7 +125,7 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
         private CalendarView calendarView;
         private BaseSelectionManager selectionManager;
         private List<DayContent> dayContents;
-        private List<CalendarSyncData> syncDataList;
+        private List<CalendarSyncData> syncDataList = new ArrayList<>();
 
         public MonthAdapterBuilder setMonths(List<Month> months) {
             this.months = months;
@@ -239,24 +234,23 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
     }
 
     public void setDaySyncData(List<CalendarSyncData> syncDataList){
-        Log.e("Shift_", "MonthAdapter : setDayContents : DayContents' size : " + dayContents.size());
+        this.syncDataList = syncDataList;
+    }
+
+    private void attachSyncData(Month month){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        for (Month month : months){
-            for(Day day : month.getDays()){
-                List<CalendarSyncData> eachDaySyncDataList = new ArrayList<>();
-                for(CalendarSyncData syncData : syncDataList){
-                    String dayDate = simpleDateFormat.format(day.getCalendar().getTime());
-                    String selectedDate = simpleDateFormat.format(syncData.getStartDate());
-                    //Log.e("Shift_","Day : " + dayDate + " selected : " + selectedDate);
-                    if(dayDate.equals(selectedDate)){
-                        eachDaySyncDataList.add(syncData);
-                        Log.e("Shift_","MonthAdapter : setDaySyncData : same!");
-                    }
+        for(Day day : month.getDays()){
+            List<CalendarSyncData> eachDaySyncDataList = new ArrayList<>();
+            for(CalendarSyncData syncData : this.syncDataList){
+                String dayDate = simpleDateFormat.format(day.getCalendar().getTime());
+                String selectedDate = simpleDateFormat.format(syncData.getStartDate());
+                if(dayDate.equals(selectedDate)){
+                    eachDaySyncDataList.add(syncData);
                 }
-                day.setSyncData(eachDaySyncDataList);
             }
+            day.setSyncData(eachDaySyncDataList);
         }
-        notifyDataSetChanged();
+        month.setSynced(true);
     }
 
 

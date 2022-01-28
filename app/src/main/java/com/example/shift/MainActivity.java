@@ -5,54 +5,30 @@ import static java.util.Calendar.getInstance;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.OrientationHelper;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.provider.CalendarContract;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.shift.cosmocalendar.adapter.MonthAdapter;
 import com.example.shift.cosmocalendar.dialog.CalendarDialog;
 import com.example.shift.cosmocalendar.dialog.OnDaysSelectionListener;
-import com.example.shift.cosmocalendar.listeners.OnMonthChangeListener;
 import com.example.shift.cosmocalendar.model.Day;
-import com.example.shift.cosmocalendar.model.Month;
-import com.example.shift.cosmocalendar.settings.SettingsManager;
-import com.example.shift.cosmocalendar.utils.CalendarSyncData;
-import com.example.shift.cosmocalendar.utils.DateUtils;
 import com.example.shift.cosmocalendar.utils.DayContent;
 import com.example.shift.cosmocalendar.utils.SelectionType;
-import com.example.shift.cosmocalendar.utils.WeekDay;
 import com.example.shift.cosmocalendar.view.CalendarView;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -65,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private DayContent dayContent_saving;
     private String key = "";
     private final int PERMISSION_NUM = 1000;
-    private List<CalendarSyncData> syncDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,8 +93,6 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout calendarButton = findViewById(R.id.current_calendar);
         TextView calendarTextView = findViewById(R.id.current_calendar_tv);
 
-        calendarSync();
-
         String date = new SimpleDateFormat("dd").format(new Date(System.currentTimeMillis()));
         calendarTextView.setText(date);
         calendarView = (CalendarView) findViewById(R.id.calendar_view);
@@ -127,8 +100,7 @@ public class MainActivity extends AppCompatActivity {
         calendarView.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
         calendarView.setSelectionType(SelectionType.NONE);
         calendarView.setCalendarOrientation(OrientationHelper.HORIZONTAL);
-        calendarView.setDaySyncData(syncDataList);
-        Log.e("Shift___", "MainActivity : initView : syncDataList.size() : " + syncDataList.size());
+        calendarView.turnOnSyncCalendar();
         monthAdapter = calendarView.getMonthAdapter();
         List<DayContent> dayContents = dayContent_saving.getSelectedDaysPref(this, key);
         calendarView.setDayContents(dayContents);
@@ -148,8 +120,6 @@ public class MainActivity extends AppCompatActivity {
                         dayContent_saving.setSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
                         calendarView.update("hello");
-
-//                        reload();
                     }
                 });
                 calendarDialog.show();
@@ -177,8 +147,6 @@ public class MainActivity extends AppCompatActivity {
                         dayContent_saving.deleteSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
                         monthAdapter.updateDayContentListItems(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
-//                        calendarView.update("hello");
-//                        reload();
                     }
                 });
                 calendarDialog.show();
@@ -225,71 +193,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void calendarSync() {
-        //https://zeph1e.tistory.com/42?category=338725
-        //https://www.youtube.com/watch?v=GihhIgDYCNo
-        syncDataList = new ArrayList<>();
-        final String[] EVENT_PROJECTION = new String[] {
-                CalendarContract.Events._ID,
-                CalendarContract.Events.TITLE,
-                CalendarContract.Events.DTSTART,
-                CalendarContract.Events.DTEND,
-                CalendarContract.Events.ALL_DAY,
-                CalendarContract.Events.DISPLAY_COLOR
-        };
 
-        Cursor cur = null;
-        ContentResolver cr = getContentResolver();
-        Uri uri = CalendarContract.Events.CONTENT_URI;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        //Submit the query and get a Cursor object back.
-        cur = cr.query(uri, EVENT_PROJECTION, null, null, null);
-        Log.e("Shift_calendar", "calendarSync");
-        // Use the cursor to step through the returned records
-        while(cur.moveToNext()){
-            int id;
-            String title = null;
-            Date dtstart = null;
-            Date dtend = null;
-            boolean allDay;
-            int color;
-
-            // Get the field values
-            id = cur.getInt(0);
-            title = cur.getString(1);
-            dtstart = new Date(cur.getLong(2));
-            dtend = new Date(cur.getLong(3));
-            allDay = (cur.getInt(4)==1) ? true : false;
-            color = cur.getInt(5);
-            Log.e("Shift___", "color : " + color);
-
-            CalendarSyncData syncData = new CalendarSyncData(id, title, dtstart, dtend, allDay, color);
-            syncDataList.add(syncData);
-        }
-
-        /*
-        Cursor cursor = getContentResolver().query(CalendarContract.Events.CONTENT_URI, null, null, null, null);
-        while(cursor.moveToNext()){
-            if(cursor!=null){
-                int id_1 = cursor.getColumnIndex(CalendarContract.Events._ID);
-                int id_2 = cursor.getColumnIndex(CalendarContract.Events.TITLE);
-                int id_3 = cursor.getColumnIndex(CalendarContract.Events.DESCRIPTION);
-                String idValue = cursor.getColumnName(id_1);
-                String titleValue = cursor.getString(id_2);
-                String descriptionValue = cursor.getString(id_3);
-                Log.e("Shift_calendar", "idValue : " + idValue);
-                Log.e("Shift_calendar", "titleValue : " + titleValue);
-                Log.e("Shift_calendar", "descriptionValue : " + descriptionValue);
-            }
-        }
-        */
-        cur.close();
-    }
-
-    private void reload(){
-        calendarView.setFirstDayOfWeek(SUNDAY);
-        List<DayContent> dayContents = dayContent_saving.getSelectedDaysPref(this, key);
-//        calendarView.setDayContents(dayContents);
-        calendarView.setDaySyncData(syncDataList);
-    }
 }
