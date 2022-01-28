@@ -3,6 +3,8 @@ package com.example.shift.Dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -22,11 +24,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.example.shift.ColorPicker.CustomFlag;
+import com.example.shift.ColorPicker.MyColorPickerDialog;
 import com.example.shift.R;
 import com.example.shift.cosmocalendar.dialog.OnDaysSelectionListener;
 import com.example.shift.cosmocalendar.model.Day;
 import com.example.shift.cosmocalendar.utils.DayContent;
 import com.example.shift.cosmocalendar.view.CalendarView;
+import com.skydoves.colorpickerview.ColorEnvelope;
+import com.skydoves.colorpickerview.ColorPickerView;
+import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
 import java.util.List;
 import java.util.Map;
@@ -47,6 +54,7 @@ public class SettingDialog extends Dialog implements View.OnClickListener, View.
     private LinearLayout colorll3;
     private LinearLayout colorll4;
     private LinearLayout colorll5;
+
     private Map<Integer, String> integerStringMap;
     String colorkey = "";
     String key = "";
@@ -101,6 +109,10 @@ public class SettingDialog extends Dialog implements View.OnClickListener, View.
         colorll5.setOnClickListener(this);
 
         colorll1.setOnLongClickListener(this);
+        colorll2.setOnLongClickListener(this);
+        colorll3.setOnLongClickListener(this);
+        colorll4.setOnLongClickListener(this);
+        colorll5.setOnLongClickListener(this);
 
     }
 
@@ -109,22 +121,51 @@ public class SettingDialog extends Dialog implements View.OnClickListener, View.
         this.onSettingListener = onSettingListener;
     }
 
+    public MyColorPickerDialog.Builder makeColorPickerBuilder(View willbeChangedView){
+        MyColorPickerDialog.Builder builder;
+        builder = new MyColorPickerDialog.Builder(getContext());
+        builder.setPreferenceName("MyColorPickerDialog")
+                .setPositiveButton("OK", new ColorEnvelopeListener() {
+                    @Override
+                    public void onColorSelected(ColorEnvelope envelope, boolean fromUser) {
+                        int getGridColor = builder.getColorGridColor();
+                        int color;
+                        SharedPreferences preferences = getContext().getSharedPreferences(getContext().getApplicationContext().getString(R.string.changeColorKey)
+                                , getContext().MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        if(getGridColor == Color.parseColor("#000000")){
+                            editor.putInt(getContext().getApplicationContext().getString(R.string.backgroundColorKey), envelope.getColor());
+                            editor.commit();
+                            color = envelope.getColor();
+                        }
+                        else{
+                            editor.putInt(getContext().getApplicationContext().getString(R.string.backgroundColorKey), getGridColor);
+                            editor.commit();
+                            color = getGridColor;
+                        }
+                        willbeChangedView.setBackgroundColor(color);
+                    }
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .attachAlphaSlideBar(false)
+                .attachBrightnessSlideBar(true);
+
+        return builder;
+    }
+
     @Override
     public boolean onLongClick(View view) {
-        int id = view.getId();
-        if(id == R.id.setting_color_ll_1){
-            Toast.makeText(view.getContext(), "1 is clicked",Toast.LENGTH_LONG).show();
-        }
-        else if(id == R.id.setting_color_ll_2){
-        }
-        else if(id == R.id.setting_color_ll_3){
-        }
+        MyColorPickerDialog.Builder builder = makeColorPickerBuilder(view);
+        ColorPickerView colorPickerView = builder.getColorPickerView();
+        colorPickerView.setFlagView(new CustomFlag(getContext(), R.layout.custom_flag));
+        builder.show();
+        onClick(view);
 
-        else if(id == R.id.setting_color_ll_4){
-        }
-
-        else if(id == R.id.setting_color_ll_5){
-        }
         return false;
     }
 

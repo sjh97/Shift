@@ -30,67 +30,119 @@
                 android:id="@+id/edit_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:layout_toLeftOf="@+id/colorBunch"
                 android:hint="입력하세요" />
 
             <LinearLayout
-                android:id="@+id/color1_btn"
+                android:id="@+id/colorBunch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_toLeftOf="@id/color2_btn"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="4dp"
-                android:background="@color/color1">
-
-                <ImageButton
-                    android:id="@+id/color1_ibtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_baseline_done_24"
-                    android:visibility="visible"
-                    android:background="#00000000"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/color2_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_toLeftOf="@+id/color3_btn"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="4dp"
-                android:background="@color/color2">
-
-                <ImageButton
-                    android:id="@+id/color2_ibtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_baseline_done_24"
-                    android:visibility="invisible"
-                    android:background="#00000000"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/color3_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
                 android:layout_toLeftOf="@+id/iv_done"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="4dp"
-                android:background="@color/color3">
+                android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/color3_ibtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_baseline_done_24"
-                    android:visibility="invisible"
-                    android:background="#00000000"/>
+                <LinearLayout
+                    android:id="@+id/color1_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_toLeftOf="@id/setting_color_ll_2"
+                    android:layout_toRightOf="@+id/edit_button"
+                    android:background="@color/color1">
+
+                    <ImageButton
+                        android:id="@+id/color1_ibtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_baseline_done_24"
+                        android:visibility="visible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/color2_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="4dp"
+                    android:layout_toLeftOf="@+id/setting_color_ll_3"
+                    android:background="@color/color2">
+
+                    <ImageButton
+                        android:id="@+id/color2_ibtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_baseline_done_24"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/color3_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="4dp"
+                    android:layout_toLeftOf="@+id/setting_color_ll_4"
+                    android:background="@color/color3">
+
+                    <ImageButton
+                        android:id="@+id/color3_ibtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_baseline_done_24"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/color4_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="4dp"
+                    android:layout_toLeftOf="@+id/setting_color_ll_5"
+                    android:background="@color/color4">
+
+                    <ImageButton
+                        android:id="@+id/color4_ibtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_baseline_done_24"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/color5_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/change_color_tv"
+                    android:background="@color/color5">
+
+                    <ImageButton
+                        android:id="@+id/color5_ibtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_baseline_done_24"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
             </LinearLayout>
+
 
 
             <ImageView
