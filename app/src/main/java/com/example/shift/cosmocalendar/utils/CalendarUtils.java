@@ -42,7 +42,7 @@ public final class CalendarUtils {
         firstDisplayedDayCalendar.setTime(firstDisplayedDay);
 
         final Calendar end = Calendar.getInstance();
-        end.setTime(DateUtils.getLastDayOfWeek(DateUtils.getLastDayOfMonth(date)));
+        end.setTime(DateUtils.getLastDayOfWeek(DateUtils.getLastDayOfMonth(date), settingsManager));
 
         //Create week day titles
         if (settingsManager.isShowDaysOfWeek()) {

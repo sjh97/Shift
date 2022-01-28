@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.shift.cosmocalendar.model.Day;
+import com.example.shift.cosmocalendar.settings.SettingsManager;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -47,19 +48,25 @@ public class DateUtils {
         return calendar.getTime();
     }
 
-    public static Date getLastDayOfWeek(@Nullable Date date) {
+    public static Date getLastDayOfWeek(@Nullable Date date, SettingsManager settingsManager) {
         Calendar calendar = Calendar.getInstance();
+        //if FirstDay is Sunday, endDay is Saturday.
+        int endDay = settingsManager.getFirstDayOfWeek() == 1 ? 7 : settingsManager.getFirstDayOfWeek() - 1;
         if (date != null) {
             calendar.setTime(date);
         }
         calendar.clear(Calendar.HOUR_OF_DAY);
         calendar.clear(Calendar.HOUR);
+        //calendar.get(Calendar.DAY_OF_MONTH) : 1 ~ 31
+        //calendar.getActualMaximum(DAY_OF_MONTH) : JAN -> 31 / APRIL -> 30
         if (calendar.get(Calendar.DAY_OF_MONTH) == calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-                && calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                && calendar.get(Calendar.DAY_OF_WEEK) == endDay) {
             return calendar.getTime();
         }
         calendar.set(Calendar.DAY_OF_WEEK, calendar.getActualMaximum(Calendar.DAY_OF_WEEK));
-        while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+        while (calendar.get(Calendar.DAY_OF_WEEK) != endDay) {
+            //add(Date, 1) : plus one day and update
+            //add(Month, 1) : plus one month and update
             calendar.add(Calendar.DATE, 1);
         }
         return calendar.getTime();
