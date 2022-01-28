@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/default_calendar_head_background_color"
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:padding="@dimen/day_text_padding">
+
+        <ImageButton
+            android:id="@+id/double_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:background="#00000000"
+            android:src="@drawable/ic_baseline_done_all_24" />
+
+        <ImageButton
+            android:id="@+id/delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:background="#00000000"
+            android:src="@drawable/ic_baseline_delete_24" />
+
+        <ImageButton
+            android:id="@+id/share_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:background="#00000000"
+            android:src="@drawable/ic_baseline_share_24" />
+
+        <FrameLayout
+            android:id="@+id/current_calendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="3dp"
+            android:background="@drawable/ic_baseline_calendar_today_24"
+            android:paddingTop="3dp">
+
+            <TextView
+                android:id="@+id/current_calendar_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="#00000000"
+                android:gravity="center"
+                android:text="10" />
+
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+    <com.example.shift.cosmocalendar.view.CalendarView
+        android:id="@+id/calendar_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="0dp" />
+
+
+</RelativeLayout>
