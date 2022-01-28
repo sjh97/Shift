@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private CalendarView calendarView;
     private MonthAdapter monthAdapter;
-    private DayContent dayContent_saving;
+    private DayContent dayContent_saving = new DayContent();
     private String key = "";
     private final int PERMISSION_NUM = 1000;
 
@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dayContent_saving = new DayContent();
         key = getString(R.string.key);
         initViews();
 
@@ -119,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         dayContent_saving.setSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
-                        calendarView.update("hello");
                     }
                 });
                 calendarDialog.show();
@@ -146,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         dayContent_saving.deleteSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
-                        monthAdapter.updateDayContentListItems(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
                     }
                 });
                 calendarDialog.show();

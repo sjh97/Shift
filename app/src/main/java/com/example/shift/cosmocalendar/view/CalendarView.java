@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.CalendarContract;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -398,14 +397,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
             multipleSelectionBarAdapter.notifyDataSetChanged();
         }
     }
-    public void update(String payload){
-        if(rvMonths != null){
-            int current_position =((GridLayoutManager) rvMonths.getLayoutManager())
-                    .findFirstCompletelyVisibleItemPosition();
-            Log.e("Shift___", "CalendarView : update(payload) : current_position : " + current_position);
-            monthAdapter.notifyItemChanged(current_position, payload);
-        }
-    }
 
     public void myupdate(){
         if(monthAdapter != null){
@@ -609,7 +600,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         settingsManager.setDayContents(dayContents);
         monthAdapter.setDayContents(dayContents);
         update();
-        Log.e("Shift_","CalendarView - setDayContents' size : " + settingsManager.getDayContents().size());
     }
 
     @Override
@@ -646,7 +636,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         //Submit the query and get a Cursor object back.
         cur = cr.query(uri, EVENT_PROJECTION, null, null, null);
-        Log.e("Shift_calendar", "calendarSync");
         // Use the cursor to step through the returned records
         while(cur.moveToNext()){
             int id;
@@ -663,7 +652,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
             dtend = new Date(cur.getLong(3));
             allDay = (cur.getInt(4)==1) ? true : false;
             color = cur.getInt(5);
-            Log.e("Shift___", "color : " + color);
 
             CalendarSyncData syncData = new CalendarSyncData(id, title, dtstart, dtend, allDay, color);
             syncDataList.add(syncData);

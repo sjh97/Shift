@@ -1,9 +1,7 @@
 package com.example.shift.cosmocalendar.adapter.viewholder;
 
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -40,7 +38,6 @@ public class DayHolder extends BaseDayHolder {
 
     public DayHolder(View itemView, CalendarView calendarView) {
         super(itemView, calendarView);
-        Log.e("Shift","DayHolder generator");
         ctvDay = itemView.findViewById(R.id.tv_day_number);
         ctvText = itemView.findViewById(R.id.tv_day_text);
         llDay = itemView.findViewById(R.id.ll_day);
@@ -56,7 +53,6 @@ public class DayHolder extends BaseDayHolder {
         ctvDay.setText(String.valueOf(day.getDayNumber()));
         ctvDay.setBackground(null);
         List<CalendarSyncData> syncDataList = day.getSyncDataList();
-        //Log.e("Shift___", day.getCalendar().getTime().toString() + " : " + syncDataList.size());
         if(syncDataList != null){
             final SyncDataAdapter syncDataAdapter = new SyncDataAdapter(listView.getContext(), syncDataList);
             listView.setAdapter(syncDataAdapter);
@@ -110,7 +106,6 @@ public class DayHolder extends BaseDayHolder {
 
     private void select(Day day) {
         if (day.isFromConnectedCalendar()) {
-            Log.e("Shift", "select - isFromConnectedCalendar");
             if(day.isDisabled()){
                 ctvDay.setTextColor(day.getConnectedDaysDisabledTextColor());
             } else {
@@ -125,7 +120,6 @@ public class DayHolder extends BaseDayHolder {
             ctvDay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
         if(day.isCurrent()){
-            Log.e("Shift__","DayHolder : select");
             ctvDay.setBackground(null);
             ctvDay.setTextColor(ContextCompat.getColor(ctvDay.getContext(), R.color.default_day_text_color));
         }
@@ -150,7 +144,6 @@ public class DayHolder extends BaseDayHolder {
             ctvDay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
         else if (day.isCurrent()){
-            Log.e("Shift__","DayHolder : unselect");
             ctvDay.setBackground(ContextCompat.getDrawable(ctvDay.getContext(), R.drawable.round_button));
             textColor = ContextCompat.getColor(ctvDay.getContext(), R.color.default_border_color);
         }

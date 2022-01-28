@@ -1,6 +1,5 @@
 package com.example.shift.cosmocalendar.adapter;
 
-import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -89,11 +88,8 @@ public class DaysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final Day day = month.getDays().get(position);
         final int numWeek = (int) Math.ceil(getItemCount() / 7);
-        final double margin = 0.85;
+        final double margin = 0.9;
         final int height = (int) (this.calendarView.getrvMonthsHeight() / numWeek * margin);
-        Log.e("Shift__","DayDelegate : onBindViewHolder : height : " + height);
-        //holder.itemView.getLayoutParams().height = height;
-        //holder.itemView.requestLayout();
         switch (holder.getItemViewType()) {
             case ItemViewType.DAY_OF_WEEK:
                 dayOfWeekDelegate.onBindDayHolder(day, (DayOfWeekHolder) holder, position);

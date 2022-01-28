@@ -3,9 +3,6 @@ package com.example.shift.cosmocalendar.adapter;
 import android.util.Log;
 import android.view.ViewGroup;
 
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shift.cosmocalendar.adapter.viewholder.MonthHolder;
@@ -16,9 +13,7 @@ import com.example.shift.cosmocalendar.settings.lists.DisabledDaysCriteria;
 import com.example.shift.cosmocalendar.utils.CalendarSyncData;
 import com.example.shift.cosmocalendar.utils.CalendarUtils;
 import com.example.shift.cosmocalendar.utils.DayContent;
-import com.example.shift.cosmocalendar.utils.DayContentDiffCallback;
 import com.example.shift.cosmocalendar.utils.DayFlag;
-import com.example.shift.cosmocalendar.utils.MonthDiffCallback;
 import com.example.shift.cosmocalendar.view.CalendarView;
 import com.example.shift.cosmocalendar.view.ItemViewType;
 import com.example.shift.cosmocalendar.view.delegate.DayDelegate;
@@ -63,15 +58,6 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
         this.selectionManager = selectionManager;
     }
 
-    public void updateDayContentListItems(List<DayContent> newDayContents){
-        final DayContentDiffCallback diffCallback = new DayContentDiffCallback(this.dayContents, newDayContents);
-        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-
-        this.dayContents.clear();
-        this.dayContents.addAll(newDayContents);
-        diffResult.dispatchUpdatesTo(this);
-    }
-
     public BaseSelectionManager getSelectionManager() {
         return selectionManager;
     }
@@ -91,7 +77,6 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
     public void onBindViewHolder(MonthHolder holder, int position) {
         final Month month = months.get(position);
         //Sync calendar data imported from default calendar app.
-        Log.e("Shift_time", (syncDataList.size()) + "");
         if(!month.isSynced() && syncDataList != null){
             attachSyncData(month);
         }
@@ -159,7 +144,6 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
 
 
         public MonthAdapter createMonthAdapter() {
-            Log.e("Shift_", "MonthAdapter : createMonthAdapter : dayContents' size : " + dayContents.size());
             return new MonthAdapter(months,
                     monthDelegate,
                     calendarView,
@@ -193,16 +177,13 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
     }
 
     public void setDayContents(List<DayContent> dayContents){
-        Log.e("Shift_", "MonthAdapter : setDayContents : DayContents' size : " + dayContents.size());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        int position = 0;
         List<DayContent> deleted = new ArrayList<>();
         if(this.dayContents.size() > dayContents.size()){
             deleted.addAll(this.dayContents);
             for(DayContent dayContent : dayContents){
                 deleted.remove(deleted.indexOf(dayContent));
             }
-            Log.e("Shift==","deleted items are " + deleted.size());
         }
         for (Month month : months){
             //추가되거나 변경될 때
@@ -210,10 +191,8 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
                 String dayDate = simpleDateFormat.format(day.getCalendar().getTime());
                 for(DayContent selected : dayContents){
                     String selectedDate = simpleDateFormat.format(selected.getContentDate());
-                    //Log.e("Shift_","Day : " + dayDate + " selected : " + selectedDate);
                     if(dayDate.equals(selectedDate)){
                         day.setDayContent(selected);
-                        Log.e("Shift_","MonthAdapter : setDayContents : same!");
                     }
                 }
                 //삭제할 때
