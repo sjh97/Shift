@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/default_calendar_head_background_color"
+        >
+
+        <TextView
+            android:id="@+id/fl_navigation_buttons_bar"
+            style="@style/CustomTextView_Large"
+            android:text="설정"
+            />
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_1x"
+        >
+
+        <TextView
+            android:id="@+id/setting_color_tv"
+            style="@style/CustomTextView_large_center"
+            android:text="근무 설정 " />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/setting_color_tv"
+            android:layout_alignParentLeft="true">
+
+            <EditText
+                android:id="@+id/setting_edit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:hint="입력하세요" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/setting_edit_button"
+                android:layout_marginLeft="5dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/setting_color_ll_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_toLeftOf="@id/setting_color_ll_2"
+                    android:layout_toRightOf="@+id/edit_button"
+                    android:background="@color/color1">
+
+                    <ImageButton
+                        android:id="@+id/setting_color_ib_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_baseline_done_24"
+                        android:visibility="visible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/setting_color_ll_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="4dp"
+                    android:layout_toLeftOf="@+id/setting_color_ll_3"
+                    android:background="@color/color2">
+
+                    <ImageButton
+                        android:id="@+id/setting_color_ib_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_baseline_done_24"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/setting_color_ll_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="4dp"
+                    android:layout_toLeftOf="@+id/setting_color_ll_4"
+                    android:background="@color/color3">
+
+                    <ImageButton
+                        android:id="@+id/setting_color_ib_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_baseline_done_24"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/setting_color_ll_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="4dp"
+                    android:layout_toLeftOf="@+id/setting_color_ll_5"
+                    android:background="@color/color4">
+
+                    <ImageButton
+                        android:id="@+id/setting_color_ib_4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_baseline_done_24"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/setting_color_ll_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/change_color_tv"
+                    android:background="@color/color5">
+
+                    <ImageButton
+                        android:id="@+id/setting_color_ib_5"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:src="@drawable/ic_baseline_done_24"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/change_color_tv"
+                style="@style/CustomTextView_Mid"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/setting_color_button"
+                android:text="변경" />
+
+            <LinearLayout
+                android:id="@+id/setting_color_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="4dp"
+                android:background="@color/color5"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#00000000"
+                    android:src="@drawable/ic_baseline_done_24"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_1x"
+        >
+
+        <TextView
+            android:id="@+id/setting_sync_tv"
+            style="@style/CustomTextView_large_center"
+            android:text="캘린더 동기화" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/setting_sync_tv"
+        android:orientation="horizontal"
+        android:layout_alignParentLeft="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <Switch
+                android:id="@+id/setting_import_sw"
+                android:text="가져오기"
+                style="@style/CustomSwitch_Mid"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <Switch
+                android:id="@+id/setting_export_sw"
+                android:text="내보내기"
+                style="@style/CustomSwitch_Mid"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/setting_done_button"
+        style="@style/CustomTextView_Mid"
+        android:text="확인"/>
+
+
+
+</LinearLayout>

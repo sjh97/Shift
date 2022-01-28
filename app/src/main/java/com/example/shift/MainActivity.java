@@ -21,6 +21,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.shift.Dialog.OnSettingListener;
+import com.example.shift.Dialog.SettingDialog;
 import com.example.shift.cosmocalendar.adapter.MonthAdapter;
 import com.example.shift.cosmocalendar.dialog.CalendarDialog;
 import com.example.shift.cosmocalendar.dialog.OnDaysSelectionListener;
@@ -29,6 +31,7 @@ import com.example.shift.cosmocalendar.utils.DayContent;
 import com.example.shift.cosmocalendar.utils.SelectionType;
 import com.example.shift.cosmocalendar.view.CalendarView;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -89,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         ImageButton doubleButton = findViewById(R.id.double_button);
         ImageButton deleteButton = findViewById(R.id.delete_button);
         ImageButton shareButton = findViewById(R.id.share_button);
+        ImageButton settingButton = findViewById(R.id.setting_button);
         FrameLayout calendarButton = findViewById(R.id.current_calendar);
         TextView calendarTextView = findViewById(R.id.current_calendar_tv);
 
@@ -103,6 +107,19 @@ public class MainActivity extends AppCompatActivity {
         monthAdapter = calendarView.getMonthAdapter();
         List<DayContent> dayContents = dayContent_saving.getSelectedDaysPref(this, key);
         calendarView.setDayContents(dayContents);
+
+        settingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SettingDialog settingDialog = new SettingDialog(view.getContext(), new OnSettingListener() {
+                    @Override
+                    public void OnSettingListener(DayContent dayContent) {
+                        calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(view.getContext(), key));
+                    }
+                });
+                settingDialog.show();
+            }
+        });
 
         doubleButton.setOnClickListener(new View.OnClickListener() {
             @Override
