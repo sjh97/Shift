@@ -16,6 +16,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -113,8 +115,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 SettingDialog settingDialog = new SettingDialog(view.getContext(), new OnSettingListener() {
                     @Override
-                    public void OnSettingListener(DayContent dayContent) {
-                        calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(view.getContext(), key));
+                    public void OnSettingListener(List<Pair<Integer, String>> beforeintegerStringList, List<Pair<Integer, String>> integerStringList) {
+                        Log.d("Shift__","1 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
+                        dayContent_saving.updateSelectedDaysPrefByColor(view.getContext(), key, beforeintegerStringList, integerStringList);
+                        Log.d("Shift__","2 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
+                        calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(view.getContext(),key));
+                        Log.d("Shift__","6 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
                     }
                 });
                 settingDialog.show();

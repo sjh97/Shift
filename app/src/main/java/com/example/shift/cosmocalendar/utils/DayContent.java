@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.Nullable;
 
@@ -84,6 +85,30 @@ public class DayContent {
         }
     }
 
+    public void updateSelectedDaysPrefByColor(Context context, String key,
+                                              List<Pair<Integer, String>> beforeintegerStringList, List<Pair<Integer, String>> integerStringList){
+        List<DayContent> data = getSelectedDaysPref(context, key);
+        List<DayContent> after = new ArrayList<>();
+        for(int i=0;i<beforeintegerStringList.size();i++){
+            int beforeColor = beforeintegerStringList.get(i).first;
+            int afterColor = integerStringList.get(i).first;
+            String written = integerStringList.get(i).second;
+            for(DayContent d : data){
+                if(d.getContentColor() == beforeColor){
+                    d.setContentColor(afterColor);
+                    d.setContentString(written);
+                }
+                after.add(d);
+            }
+        }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        Gson gson = new GsonBuilder().create();
+        String save = gson.toJson(after, new TypeToken<List<DayContent>>(){}.getType());
+        editor.putString(key, save);
+        editor.commit();
+    }
+
     public void updateSelectedDaysPrefByColor(Context context, String key, String written, int color){
         List<DayContent> data = getSelectedDaysPref(context, key);
         List<DayContent> after = new ArrayList<>();
@@ -100,31 +125,30 @@ public class DayContent {
         editor.commit();
     }
 
-    public void setColorStringPref(Context context, String key, Map<Integer, String> integerStringMap){
+    public void setColorStringPref(Context context, String key, List<Pair<Integer, String>> integerStringList){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         Gson gson = new GsonBuilder().create();
-        String save = gson.toJson(integerStringMap, new TypeToken<Map<Integer, String>>(){}.getType());
+        String save = gson.toJson(integerStringList, new TypeToken<List<Pair<Integer, String>>>(){}.getType());
         editor.putString(key, save);
         editor.commit();
     }
 
-    public Map<Integer, String> getColorStringPref(Context context, String key){
+    public List<Pair<Integer, String>> getColorStringPref(Context context, String key){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String saved = preferences.getString(key, null);
         Gson gson = new GsonBuilder().create();
-        Map<Integer, String> integerStringMap = new HashMap<Integer, String>(){
-            {
-                put(context.getColor(R.color.color1),"");
-                put(context.getColor(R.color.color2),"");
-                put(context.getColor(R.color.color3),"");
-            }
-        };
+        List<Pair<Integer, String>> integerStringList = new ArrayList<>();
+        integerStringList.add(Pair.create(context.getColor(R.color.color1),""));
+        integerStringList.add(Pair.create(context.getColor(R.color.color2),""));
+        integerStringList.add(Pair.create(context.getColor(R.color.color3),""));
+        integerStringList.add(Pair.create(context.getColor(R.color.color4),""));
+        integerStringList.add(Pair.create(context.getColor(R.color.color5),""));
 
         if(saved != null){
-            integerStringMap = gson.fromJson(saved, new TypeToken<Map<Integer, String>>(){}.getType());
+            integerStringList = gson.fromJson(saved, new TypeToken<List<Pair<Integer, String>>>(){}.getType());
         }
-        return integerStringMap;
+        return integerStringList;
     }
 
     public void setSelectedDaysPref(Context context, String key, List<Day> selectedDays, String written, int color){

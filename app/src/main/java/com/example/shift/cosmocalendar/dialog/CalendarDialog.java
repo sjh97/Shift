@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,13 +49,8 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
     private ImageView ivDone;
     private EditText editText;
     private CalendarView calendarView;
-    private ImageView colorIv1;
-    private ImageView colorIv2;
-    private ImageView colorIv3;
-    private LinearLayout colorll1;
-    private LinearLayout colorll2;
-    private LinearLayout colorll3;
-    private Map<Integer, String> integerStringMap;
+    private LinearLayout colorBunch;
+    private List<Pair<Integer, String>> integerStringList;
     String colorkey = "";
     String key = "";
 
@@ -90,14 +86,9 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
         ivDone = (ImageView) findViewById(R.id.iv_done);
         editText = findViewById(R.id.edit_button);
         calendarView = (CalendarView) findViewById(R.id.calendar_view);
-        colorIv1 = findViewById(R.id.color1_ibtn);
-        colorIv2 = findViewById(R.id.color2_ibtn);
-        colorIv3 = findViewById(R.id.color3_ibtn);
-        colorll1 = findViewById(R.id.color1_btn);
-        colorll2 = findViewById(R.id.color2_btn);
-        colorll3 = findViewById(R.id.color3_btn);
-        integerStringMap = new DayContent().getColorStringPref(editText.getContext(), colorkey);
-        editText.setText(integerStringMap.get(((ColorDrawable)colorll1.getBackground()).getColor()));
+        colorBunch = findViewById(R.id.colorBunch);
+        integerStringList = new DayContent().getColorStringPref(editText.getContext(), colorkey);
+        editText.setText(integerStringList.get(0).second);
 
 //        Drawable background = calendarView.getBackground();
         /*
@@ -109,23 +100,20 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
 
         ivCancel.setOnClickListener(this);
         ivDone.setOnClickListener(this);
-        colorll1.setOnClickListener(this);
-        colorll2.setOnClickListener(this);
-        colorll3.setOnClickListener(this);
+        for(int i=0;i<colorBunch.getChildCount();i++){
+            colorBunch.getChildAt(i).setOnClickListener(this);
+            colorBunch.getChildAt(i).setBackgroundColor(integerStringList.get(i).first);
+        }
 
     }
 
     public void setInvisibleIcon(){
-        colorll1.setVisibility(View.INVISIBLE);
-        colorll2.setVisibility(View.INVISIBLE);
-        colorll3.setVisibility(View.INVISIBLE);
+        colorBunch.setVisibility(View.INVISIBLE);
         editText.setVisibility(View.INVISIBLE);
     }
 
     public void setVisibleIcon(){
-        colorll1.setVisibility(View.VISIBLE);
-        colorll2.setVisibility(View.VISIBLE);
-        colorll3.setVisibility(View.VISIBLE);
+        colorBunch.setVisibility(View.VISIBLE);
         editText.setVisibility(View.VISIBLE);
     }
 
@@ -139,26 +127,22 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
         int id = v.getId();
         if (id == R.id.iv_cancel) {
             cancel();
-        } else if (id == R.id.iv_done) {
+        }
+        else if (id == R.id.iv_done) {
             doneClick();
         }
-        else if(id == R.id.color1_btn){
-            colorIv1.setVisibility(View.VISIBLE);
-            colorIv2.setVisibility(View.INVISIBLE);
-            colorIv3.setVisibility(View.INVISIBLE);
-            editText.setText(integerStringMap.get(((ColorDrawable)colorll1.getBackground()).getColor()));
-        }
-        else if(id == R.id.color2_btn){
-            colorIv1.setVisibility(View.INVISIBLE);
-            colorIv2.setVisibility(View.VISIBLE);
-            colorIv3.setVisibility(View.INVISIBLE);
-            editText.setText(integerStringMap.get(((ColorDrawable)colorll2.getBackground()).getColor()));
-        }
-        else if(id == R.id.color3_btn){
-            colorIv1.setVisibility(View.INVISIBLE);
-            colorIv2.setVisibility(View.INVISIBLE);
-            colorIv3.setVisibility(View.VISIBLE);
-            editText.setText(integerStringMap.get(((ColorDrawable)colorll3.getBackground()).getColor()));
+        else{
+            for(int i=0;i<colorBunch.getChildCount();i++){
+                //colorview is colorll (R.id.color1_btn)
+                LinearLayout colorView = (LinearLayout) colorBunch.getChildAt(i);
+                if(id == colorView.getId()){
+                    colorView.getChildAt(0).setVisibility(View.VISIBLE);
+                    editText.setText(integerStringList.get(i).second);
+                }
+                else{
+                    colorView.getChildAt(0).setVisibility(View.INVISIBLE);
+                }
+            }
         }
     }
 
@@ -166,21 +150,20 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
         List<Day> selectedDays = calendarView.getSelectedDays();
         String written = editText.getText().toString();
         int color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.color1_btn)).getBackground()).getColor();;
-        if(colorIv1.getVisibility() == View.VISIBLE){
-            color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.color1_btn)).getBackground()).getColor();
+        for(int i=0;i<colorBunch.getChildCount();i++){
+            //colorview is colorll (R.id.color1_btn)
+            LinearLayout colorView = (LinearLayout) colorBunch.getChildAt(i);
+            if(colorView.getChildAt(0).getVisibility() == View.VISIBLE){
+                color = ((ColorDrawable) colorView.getBackground()).getColor();
+                //이 구문을 onDaysSelected 앞에 둬야 색깔 정보가 업데이트 되고 이후 onDaysSelected가 실행된다.
+                DayContent dayContent = new DayContent();
+                List<Pair<Integer, String>> integerStringList = dayContent.getColorStringPref(this.getContext(), colorkey);
+                integerStringList.set(i,Pair.create(color,editText.getText().toString()));
+                dayContent.setColorStringPref(this.getContext(),colorkey, integerStringList);
+                dayContent.updateSelectedDaysPrefByColor(this.getContext(),key,editText.getText().toString(),color);
+                break;
+            }
         }
-        else if(colorIv2.getVisibility() == View.VISIBLE){
-            color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.color2_btn)).getBackground()).getColor();
-        }
-        else if(colorIv3.getVisibility() == View.VISIBLE){
-            color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.color3_btn)).getBackground()).getColor();
-        }
-        //이 구문을 onDaysSelected 앞에 둬야 색깔 정보가 업데이트 되고 이후 onDaysSelected가 실행된다.
-        DayContent dayContent = new DayContent();
-        Map<Integer, String> map = dayContent.getColorStringPref(this.getContext(), colorkey);
-        map.put(color,editText.getText().toString());
-        dayContent.setColorStringPref(this.getContext(),colorkey, map);
-        dayContent.updateSelectedDaysPrefByColor(this.getContext(),key,editText.getText().toString(),color);
 
         if (onDaysSelectionListener != null) {
             onDaysSelectionListener.onDaysSelected(selectedDays, written, color);

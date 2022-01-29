@@ -179,14 +179,18 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
     public void setDayContents(List<DayContent> dayContents){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<DayContent> deleted = new ArrayList<>();
+        Log.d("Shift__","4-1 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         if(this.dayContents.size() > dayContents.size()){
             deleted.addAll(this.dayContents);
             for(DayContent dayContent : dayContents){
                 deleted.remove(deleted.indexOf(dayContent));
             }
         }
+        Log.d("Shift__", "DayContent size() : " + dayContents.size());
+        Log.d("Shift__","4-2 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         for (Month month : months){
             //추가되거나 변경될 때
+            Log.d("Shift__","4-2 : start " + month.getMonthName() + " : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
             for(Day day : month.getDays()){
                 String dayDate = simpleDateFormat.format(day.getCalendar().getTime());
                 for(DayContent selected : dayContents){
@@ -208,7 +212,9 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
                     }
                 }
             }
+            Log.d("Shift__","4-3 : end " + month.getMonthName() + " : "+ new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         }
+        Log.d("Shift__","4-3 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         this.dayContents = dayContents;
     }
 

@@ -9,12 +9,14 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,27 +37,22 @@ import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.ColorPickerView;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class SettingDialog extends Dialog implements View.OnClickListener, View.OnLongClickListener{
+public class SettingDialog extends Dialog implements View.OnClickListener{
 
     //Views
     private TextView ivDone;
     private EditText editText;
-    private ImageView colorIv1;
-    private ImageView colorIv2;
-    private ImageView colorIv3;
-    private ImageView colorIv4;
-    private ImageView colorIv5;
-    private LinearLayout colorll1;
-    private LinearLayout colorll2;
-    private LinearLayout colorll3;
-    private LinearLayout colorll4;
-    private LinearLayout colorll5;
+    private LinearLayout changeColorButton;
+    private LinearLayout setting_colorBunch;
 
-    private Map<Integer, String> integerStringMap;
+    private List<Pair<Integer, String>> integerStringList;
+    private List<Pair<Integer, String>> beforeintegerStringList;
     String colorkey = "";
     String key = "";
 
@@ -84,35 +81,23 @@ public class SettingDialog extends Dialog implements View.OnClickListener, View.
     }
 
     private void initViews() {
+        beforeintegerStringList = new DayContent().getColorStringPref(getContext(), colorkey);
+        integerStringList = new DayContent().getColorStringPref(getContext(), colorkey);
+
         ivDone = findViewById(R.id.setting_done_button);
         editText = findViewById(R.id.setting_edit_button);
-        colorIv1 = findViewById(R.id.setting_color_ib_1);
-        colorIv2 = findViewById(R.id.setting_color_ib_2);
-        colorIv3 = findViewById(R.id.setting_color_ib_3);
-        colorIv4 = findViewById(R.id.setting_color_ib_4);
-        colorIv5 = findViewById(R.id.setting_color_ib_5);
-
-        colorll1 = findViewById(R.id.setting_color_ll_1);
-        colorll2 = findViewById(R.id.setting_color_ll_2);
-        colorll3 = findViewById(R.id.setting_color_ll_3);
-        colorll4 = findViewById(R.id.setting_color_ll_4);
-        colorll5 = findViewById(R.id.setting_color_ll_5);
-
-        integerStringMap = new DayContent().getColorStringPref(editText.getContext(), colorkey);
-        editText.setText(integerStringMap.get(((ColorDrawable)colorll1.getBackground()).getColor()));
+        changeColorButton = findViewById(R.id.setting_color_button);
+        changeColorButton.setBackgroundColor(integerStringList.get(0).first);
+        changeColorButton.setOnClickListener(this);
+        setting_colorBunch = findViewById(R.id.setting_colorBunch);
+        for(int i=0;i<setting_colorBunch.getChildCount();i++){
+            setting_colorBunch.getChildAt(i).setOnClickListener(this);
+            setting_colorBunch.getChildAt(i).setBackgroundColor(integerStringList.get(i).first);
+        }
+        editText.setText(integerStringList.get(0).second);
 
         ivDone.setOnClickListener(this);
-        colorll1.setOnClickListener(this);
-        colorll2.setOnClickListener(this);
-        colorll3.setOnClickListener(this);
-        colorll4.setOnClickListener(this);
-        colorll5.setOnClickListener(this);
 
-        colorll1.setOnLongClickListener(this);
-        colorll2.setOnLongClickListener(this);
-        colorll3.setOnLongClickListener(this);
-        colorll4.setOnLongClickListener(this);
-        colorll5.setOnLongClickListener(this);
 
     }
 
@@ -121,7 +106,7 @@ public class SettingDialog extends Dialog implements View.OnClickListener, View.
         this.onSettingListener = onSettingListener;
     }
 
-    public MyColorPickerDialog.Builder makeColorPickerBuilder(View willbeChangedView){
+    public MyColorPickerDialog.Builder makeColorPickerBuilder(List<View> willbeChangedViews){
         MyColorPickerDialog.Builder builder;
         builder = new MyColorPickerDialog.Builder(getContext());
         builder.setPreferenceName("MyColorPickerDialog")
@@ -143,7 +128,8 @@ public class SettingDialog extends Dialog implements View.OnClickListener, View.
                             editor.commit();
                             color = getGridColor;
                         }
-                        willbeChangedView.setBackgroundColor(color);
+                        for(View view : willbeChangedViews)
+                            view.setBackgroundColor(color);
                     }
                 })
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -159,93 +145,70 @@ public class SettingDialog extends Dialog implements View.OnClickListener, View.
     }
 
     @Override
-    public boolean onLongClick(View view) {
-        MyColorPickerDialog.Builder builder = makeColorPickerBuilder(view);
-        ColorPickerView colorPickerView = builder.getColorPickerView();
-        colorPickerView.setFlagView(new CustomFlag(getContext(), R.layout.custom_flag));
-        builder.show();
-        onClick(view);
-
-        return false;
-    }
-
-    @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.setting_done_button) {
+            Log.d("Shift___","setting_done_button");
             doneClick();
         }
-        else if(id == R.id.setting_color_ll_1){
-            colorIv1.setVisibility(View.VISIBLE);
-            colorIv2.setVisibility(View.INVISIBLE);
-            colorIv3.setVisibility(View.INVISIBLE);
-            colorIv4.setVisibility(View.INVISIBLE);
-            colorIv5.setVisibility(View.INVISIBLE);
-            editText.setText(integerStringMap.get(((ColorDrawable)colorll1.getBackground()).getColor()));
+        else if(id == R.id.setting_color_button){
+            Log.d("Shift___","setting_change_color_button");
+            for(int i=0;i<setting_colorBunch.getChildCount();i++){
+                //colorview is colorll (R.id.color1_btn)
+                LinearLayout colorView = (LinearLayout) setting_colorBunch.getChildAt(i);
+                if(colorView.getChildAt(0).getVisibility() == View.VISIBLE){
+                    MyColorPickerDialog.Builder builder = makeColorPickerBuilder(new ArrayList<>(Arrays.asList(colorView, v)));
+                    ColorPickerView colorPickerView = builder.getColorPickerView();
+                    colorPickerView.setFlagView(new CustomFlag(getContext(), R.layout.custom_flag));
+                    builder.show();
+                    break;
+                }
+            }
         }
-        else if(id == R.id.setting_color_ll_2){
-            colorIv1.setVisibility(View.INVISIBLE);
-            colorIv2.setVisibility(View.VISIBLE);
-            colorIv3.setVisibility(View.INVISIBLE);
-            colorIv4.setVisibility(View.INVISIBLE);
-            colorIv5.setVisibility(View.INVISIBLE);
-            editText.setText(integerStringMap.get(((ColorDrawable)colorll2.getBackground()).getColor()));
-        }
-        else if(id == R.id.setting_color_ll_3){
-            colorIv1.setVisibility(View.INVISIBLE);
-            colorIv2.setVisibility(View.INVISIBLE);
-            colorIv3.setVisibility(View.VISIBLE);
-            colorIv4.setVisibility(View.INVISIBLE);
-            colorIv5.setVisibility(View.INVISIBLE);
-            editText.setText(integerStringMap.get(((ColorDrawable)colorll3.getBackground()).getColor()));
-        }
-
-        else if(id == R.id.setting_color_ll_4){
-            colorIv1.setVisibility(View.INVISIBLE);
-            colorIv2.setVisibility(View.INVISIBLE);
-            colorIv3.setVisibility(View.INVISIBLE);
-            colorIv4.setVisibility(View.VISIBLE);
-            colorIv5.setVisibility(View.INVISIBLE);
-            editText.setText(integerStringMap.get(((ColorDrawable)colorll4.getBackground()).getColor()));
-        }
-
-        else if(id == R.id.setting_color_ll_5){
-            colorIv1.setVisibility(View.INVISIBLE);
-            colorIv2.setVisibility(View.INVISIBLE);
-            colorIv3.setVisibility(View.INVISIBLE);
-            colorIv4.setVisibility(View.INVISIBLE);
-            colorIv5.setVisibility(View.VISIBLE);
-            editText.setText(integerStringMap.get(((ColorDrawable)colorll5.getBackground()).getColor()));
+        //여기는 color 선택들만 나머지는 위에 else if에 다세용
+        else{
+            for(int i=0;i<setting_colorBunch.getChildCount();i++){
+                //colorview is colorll (R.id.color1_btn)
+                LinearLayout colorView = (LinearLayout) setting_colorBunch.getChildAt(i);
+                if(colorView.getChildAt(0).getVisibility() == View.VISIBLE){
+                    int color = ((ColorDrawable) colorView.getBackground()).getColor();
+                    String written = editText.getText().toString();
+                    integerStringList.set(i,Pair.create(color,written));
+                    break;
+                }
+            }
+            for(int i=0;i<setting_colorBunch.getChildCount();i++){
+                //colorview is colorll (R.id.color1_btn)
+                LinearLayout colorView = (LinearLayout) setting_colorBunch.getChildAt(i);
+                if(id == colorView.getId()){
+                    changeColorButton.setBackgroundColor(((ColorDrawable)colorView.getBackground()).getColor());
+                    colorView.getChildAt(0).setVisibility(View.VISIBLE);
+                    editText.setText(integerStringList.get(i).second);
+                }
+                else{
+                    colorView.getChildAt(0).setVisibility(View.INVISIBLE);
+                }
+            }
         }
     }
 
     private void doneClick() {
-        String written = editText.getText().toString();
-        int color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.setting_color_ll_1)).getBackground()).getColor();;
-        if(colorIv1.getVisibility() == View.VISIBLE){
-            color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.setting_color_ll_1)).getBackground()).getColor();
-        }
-        else if(colorIv2.getVisibility() == View.VISIBLE){
-            color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.setting_color_ll_2)).getBackground()).getColor();
-        }
-        else if(colorIv3.getVisibility() == View.VISIBLE){
-            color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.setting_color_ll_3)).getBackground()).getColor();
-        }
-        else if(colorIv4.getVisibility() == View.VISIBLE){
-            color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.setting_color_ll_4)).getBackground()).getColor();
-        }
-        else if(colorIv5.getVisibility() == View.VISIBLE){
-            color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.setting_color_ll_5)).getBackground()).getColor();
+
+        for(int i=0;i<setting_colorBunch.getChildCount();i++){
+            //colorview is colorll (R.id.color1_btn)
+            LinearLayout colorView = (LinearLayout) setting_colorBunch.getChildAt(i);
+            if(colorView.getChildAt(0).getVisibility() == View.VISIBLE){
+                int color = ((ColorDrawable) colorView.getBackground()).getColor();
+                String written = editText.getText().toString();
+                integerStringList.set(i,Pair.create(color,written));
+                break;
+            }
         }
 
-        DayContent dayContent = new DayContent();
-        Map<Integer, String> map = dayContent.getColorStringPref(this.getContext(), colorkey);
-        map.put(color,editText.getText().toString());
-        dayContent.setColorStringPref(this.getContext(),colorkey, map);
-        dayContent.updateSelectedDaysPrefByColor(this.getContext(),key,editText.getText().toString(),color);
+        new DayContent().setColorStringPref(getContext(), colorkey, integerStringList);
 
         if (onSettingListener != null) {
-            onSettingListener.OnSettingListener(dayContent);
+            onSettingListener.OnSettingListener(beforeintegerStringList,integerStringList);
         }
 
         dismiss();

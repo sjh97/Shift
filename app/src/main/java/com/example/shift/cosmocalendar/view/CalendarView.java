@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.CalendarContract;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -597,8 +598,11 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
 
     @Override
     public void setDayContents(List<DayContent> dayContents) {
+        Log.d("Shift__","3 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         settingsManager.setDayContents(dayContents);
+        Log.d("Shift__","4 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         monthAdapter.setDayContents(dayContents);
+        Log.d("Shift__","5 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         update();
     }
 
