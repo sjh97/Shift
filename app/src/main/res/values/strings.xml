@@ -2,6 +2,7 @@
     <string name="app_name">Customizable Calendar</string>
     <string name="key">selectedDays</string>
     <string name="colorkey">colorKey</string>
+    <string name="settingkey">settingKey</string>
     <string name="backgroundColorKey">backgroundColorKey</string>
     <string name="changeColorKey">changeColorKey</string>
 </resources>

@@ -10,11 +10,14 @@ import androidx.recyclerview.widget.OrientationHelper;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Pair;
@@ -25,10 +28,12 @@ import android.widget.TextView;
 
 import com.example.shift.Dialog.OnSettingListener;
 import com.example.shift.Dialog.SettingDialog;
+import com.example.shift.Utils.SettingHelper;
 import com.example.shift.cosmocalendar.adapter.MonthAdapter;
 import com.example.shift.cosmocalendar.dialog.CalendarDialog;
 import com.example.shift.cosmocalendar.dialog.OnDaysSelectionListener;
 import com.example.shift.cosmocalendar.model.Day;
+import com.example.shift.cosmocalendar.settings.lists.connected_days.ConnectedDays;
 import com.example.shift.cosmocalendar.utils.DayContent;
 import com.example.shift.cosmocalendar.utils.SelectionType;
 import com.example.shift.cosmocalendar.view.CalendarView;
@@ -38,6 +43,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private MonthAdapter monthAdapter;
     private DayContent dayContent_saving = new DayContent();
     private String key = "";
+    private String settingkey = "";
+    private SettingHelper settingHelper;
     private final int PERMISSION_NUM = 1000;
 
     @Override
@@ -52,11 +61,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         key = getString(R.string.key);
+        settingkey = getString(R.string.settingkey);
+        settingHelper = new SettingHelper(this, settingkey);
         initViews();
 
         int permission1 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR);
         int permission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR);
         int permission3 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
         if(permission1 == PackageManager.PERMISSION_DENIED ||
                 permission2 == PackageManager.PERMISSION_DENIED ||
                     permission3 == PackageManager.PERMISSION_DENIED){
@@ -66,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
             }
             return;
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(0,0);
     }
 
     @Override
@@ -105,7 +123,23 @@ public class MainActivity extends AppCompatActivity {
         calendarView.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
         calendarView.setSelectionType(SelectionType.NONE);
         calendarView.setCalendarOrientation(OrientationHelper.HORIZONTAL);
-        calendarView.turnOnSyncCalendar();
+        //Set days you want to connect
+        Calendar calendar = Calendar.getInstance();
+        Set<Long> days = new TreeSet<>();
+        days.add(calendar.getTimeInMillis());
+        calendar.set(2022,Calendar.JANUARY,31);
+        days.add(calendar.getTimeInMillis());
+
+        int textColor = Color.parseColor("#ff0000");
+        int selectedTextColor = Color.parseColor("#ff4000");
+        int disabledTextColor = Color.parseColor("#ff8000");
+        ConnectedDays connectedDays = new ConnectedDays(days, textColor, selectedTextColor, disabledTextColor);
+
+        calendarView.addConnectedDays(connectedDays);
+
+        if(settingHelper.isImport()){
+            calendarView.turnOnSyncCalendar();
+        }
         monthAdapter = calendarView.getMonthAdapter();
         List<DayContent> dayContents = dayContent_saving.getSelectedDaysPref(this, key);
         calendarView.setDayContents(dayContents);
@@ -113,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         settingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SettingDialog settingDialog = new SettingDialog(view.getContext(), new OnSettingListener() {
+                SettingDialog settingDialog = new SettingDialog(view.getContext(), MainActivity.this, calendarView, new OnSettingListener() {
                     @Override
                     public void OnSettingListener(List<Pair<Integer, String>> beforeintegerStringList, List<Pair<Integer, String>> integerStringList) {
                         Log.d("Shift__","1 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));

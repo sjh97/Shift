@@ -619,6 +619,20 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         setDaySyncData(this.syncDataList);
     }
 
+    public void turnOnSyncCalendar(boolean isFirst){
+        if(isFirst){
+            this.turnOnSyncCalendar();
+        }
+        else{
+
+        }
+    }
+
+    public void turnOffSyncCalendar(){
+        this.syncDataList = null;
+        setDaySyncData(null);
+    }
+
     //synchronize default calendar.
     private void calendarSync() {
         //https://zeph1e.tistory.com/42?category=338725
@@ -631,7 +645,10 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
                 CalendarContract.Events.DTSTART,
                 CalendarContract.Events.DTEND,
                 CalendarContract.Events.ALL_DAY,
-                CalendarContract.Events.DISPLAY_COLOR
+                CalendarContract.Events.DISPLAY_COLOR,
+                CalendarContract.Events.DURATION,
+                CalendarContract.Events.RDATE,
+                CalendarContract.Events.RRULE
         };
 
         Cursor cur = null;
@@ -648,6 +665,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
             Date dtend = null;
             boolean allDay;
             int color;
+            int duration = 0;
 
             // Get the field values
             id = cur.getInt(0);
@@ -656,6 +674,13 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
             dtend = new Date(cur.getLong(3));
             allDay = (cur.getInt(4)==1) ? true : false;
             color = cur.getInt(5);
+            //duration : 반복된 이벤트에서 그 이벤트가 며칠간인지
+            String prev_duration = cur.getString(6);
+            duration = (prev_duration != null) ? Integer.parseInt(prev_duration.split("\\D+")[1]) : 0;
+            Log.d("Shift__", new SimpleDateFormat("yyyy-MM-dd").format(dtstart)
+                    + " Duration : " + prev_duration + " : " + duration);
+
+
 
             CalendarSyncData syncData = new CalendarSyncData(id, title, dtstart, dtend, allDay, color);
             syncDataList.add(syncData);

@@ -211,6 +211,7 @@
             <Switch
                 android:id="@+id/setting_import_sw"
                 android:text="가져오기"
+                android:checked="true"
                 style="@style/CustomSwitch_Mid"/>
 
         </LinearLayout>
@@ -222,6 +223,7 @@
             <Switch
                 android:id="@+id/setting_export_sw"
                 android:text="내보내기"
+                android:checked="true"
                 style="@style/CustomSwitch_Mid"
                 />
 
