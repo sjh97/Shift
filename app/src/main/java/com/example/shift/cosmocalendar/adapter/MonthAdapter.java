@@ -190,7 +190,7 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
         Log.d("Shift__","4-2 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         for (Month month : months){
             //추가되거나 변경될 때
-            Log.d("Shift__","4-2 : start " + month.getMonthName() + " : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
+            //Log.d("Shift__","4-2 : start " + month.getMonthName() + " : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
             for(Day day : month.getDays()){
                 String dayDate = simpleDateFormat.format(day.getCalendar().getTime());
                 for(DayContent selected : dayContents){
@@ -212,7 +212,7 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
                     }
                 }
             }
-            Log.d("Shift__","4-3 : end " + month.getMonthName() + " : "+ new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
+            //Log.d("Shift__","4-3 : end " + month.getMonthName() + " : "+ new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         }
         Log.d("Shift__","4-3 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         this.dayContents = dayContents;

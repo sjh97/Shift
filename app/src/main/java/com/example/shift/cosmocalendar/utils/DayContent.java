@@ -97,8 +97,10 @@ public class DayContent {
                 if(d.getContentColor() == beforeColor){
                     d.setContentColor(afterColor);
                     d.setContentString(written);
+                    after.add(d);
                 }
-                after.add(d);
+                //여기에 after.add(d)가 있으면 5배씩(beforeintegerStringList.size()) daycontent가 증가하게 된다...
+                //after.add(d);
             }
         }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
