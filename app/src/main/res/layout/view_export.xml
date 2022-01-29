@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <FrameLayout
+        android:id="@+id/view_export_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/view_export_iv_cancel"
+                android:layout_alignParentLeft="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:paddingTop="@dimen/space_1x"
+                android:paddingRight="@dimen/space_1x"
+                android:paddingBottom="@dimen/space_1x"
+                android:src="@drawable/ic_close_gray" />
+
+
+            <ImageView
+                android:id="@+id/view_export_iv_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:layout_alignParentRight="true"
+                android:paddingBottom="@dimen/space_1x"
+                android:paddingLeft="@dimen/space_1x"
+                android:paddingRight="20dp"
+                android:paddingTop="@dimen/space_1x"
+                android:src="@drawable/ic_done_gray" />
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+    <Spinner
+        android:id="@+id/view_export_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ListView
+        android:id="@+id/view_export_listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
+
+</LinearLayout>

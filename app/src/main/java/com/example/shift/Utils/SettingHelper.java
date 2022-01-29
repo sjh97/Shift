@@ -34,8 +34,10 @@ public class SettingHelper {
         String saved = preferences.getString(key, null);
         if(saved == null){
             //처음 초기화
-            settings.isExport = true;
-            settings.isExport = true;
+            settings.isImport = true;
+            settings.isExport = false;
+            settings.exportDataList = null;
+            settings.exportIndices = Pair.create(0,-1);
         }
         else{
             Settings settings = gson.fromJson(saved, new TypeToken<Settings>(){}.getType());
@@ -48,17 +50,34 @@ public class SettingHelper {
         return settings.isImport;
     }
 
+    public boolean isExport() {
+        return settings.isExport;
+    }
+
+    public List<ExportData> getExportDataList() {
+        return settings.exportDataList;
+    }
+
+    public Pair<Integer, Integer> getExportIndices() {
+        return settings.exportIndices;
+    }
+
     public void setImport(boolean isImport) {
         settings.isImport = isImport;
         saveSetting();
     }
 
-    public boolean isExport() {
-        return settings.isExport;
-    }
-
     public void setExport(boolean export) {
         settings.isExport = export;
+        saveSetting();
+    }
+    public void setExportDataList(List<ExportData> exportDataList){
+        settings.exportDataList = exportDataList;
+        saveSetting();
+    }
+
+    public void setExportIndices(int AccountPos, int DisplayPos){
+        settings.exportIndices = Pair.create(AccountPos, DisplayPos);
         saveSetting();
     }
 
@@ -76,6 +95,8 @@ public class SettingHelper {
 
         public boolean isImport;
         public boolean isExport;
+        public List<ExportData> exportDataList;
+        private Pair<Integer,Integer> exportIndices;
     }
 
 }

@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         key = getString(R.string.key);
         settingkey = getString(R.string.settingkey);
         settingHelper = new SettingHelper(this, settingkey);
-        initViews();
 
         int permission1 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR);
         int permission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR);
@@ -78,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return;
         }
+        initViews();
     }
 
     @Override

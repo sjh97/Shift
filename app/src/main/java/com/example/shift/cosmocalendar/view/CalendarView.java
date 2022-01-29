@@ -2,6 +2,7 @@ package com.example.shift.cosmocalendar.view;
 
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -73,6 +74,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -111,6 +113,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
 
     //Contents
     private List<CalendarSyncData> syncDataList = new ArrayList<>();
+    private int calendar_ID = -100;
 
     private int lastVisibleMonthPosition = SettingsManager.DEFAULT_MONTH_COUNT / 2;
 
@@ -638,7 +641,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         //https://zeph1e.tistory.com/42?category=338725
         //https://www.youtube.com/watch?v=GihhIgDYCNo
         this.syncDataList = new ArrayList<>();
-
         final String[] EVENT_PROJECTION = new String[] {
                 CalendarContract.Events._ID,
                 CalendarContract.Events.TITLE,
@@ -648,7 +650,8 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
                 CalendarContract.Events.DISPLAY_COLOR,
                 CalendarContract.Events.DURATION,
                 CalendarContract.Events.RDATE,
-                CalendarContract.Events.RRULE
+                CalendarContract.Events.RRULE,
+                CalendarContract.Events.CALENDAR_ID
         };
 
         Cursor cur = null;
@@ -666,6 +669,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
             boolean allDay;
             int color;
             int duration = 0;
+            String rrule = null;
 
             // Get the field values
             id = cur.getInt(0);
@@ -676,9 +680,26 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
             color = cur.getInt(5);
             //duration : 반복된 이벤트에서 그 이벤트가 며칠간인지
             String prev_duration = cur.getString(6);
+            //rrule은 duration > 0이 아니면 null 임
+            rrule = cur.getString(8);
+
+            this.calendar_ID = cur.getInt(9);
+
             duration = (prev_duration != null) ? Integer.parseInt(prev_duration.split("\\D+")[1]) : 0;
-            Log.d("Shift__", new SimpleDateFormat("yyyy-MM-dd").format(dtstart)
-                    + " Duration : " + prev_duration + " : " + duration);
+            Log.d("Shift__","Calendar ID : " + this.calendar_ID);
+            Log.d("Shift__"," _ID : " + id);
+//            Log.d("Shift__", new SimpleDateFormat("yyyy-MM-dd").format(dtstart)
+//                    + " Duration : " + prev_duration + " : " + duration);
+            if(duration > 0){
+                Calendar calendar = Calendar.getInstance();
+                int current_year = calendar.get(Calendar.YEAR);
+                calendar.setTime(dtstart);
+                calendar.set(current_year, calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                dtstart = calendar.getTime();
+                String[] rules = rrule.split(";|=");
+                Log.d("Shift__", "After setting : " + new SimpleDateFormat("yyyy-MM-dd").format(dtstart));
+                Log.d("Shift__", "rrule : " + rrule);
+            }
 
 
 
@@ -686,6 +707,22 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
             syncDataList.add(syncData);
         }
         cur.close();
+    }
+
+    public void sendDataToCalendar(){
+        ContentResolver cr = getContext().getContentResolver();
+        ContentValues cv = new ContentValues();
+        for(DayContent dayContent : getDayContents() ){
+            cv.put(CalendarContract.Events.TITLE, dayContent.getContentString());
+//            cv.put(CalendarContract.Events.DISPLAY_COLOR, dayContent.getContentColor());
+            cv.put(CalendarContract.Events.ALL_DAY, 1);
+            cv.put(CalendarContract.Events.DTSTART, dayContent.getContentDate().getTime());
+            cv.put(CalendarContract.Events.DTEND, dayContent.getContentDate().getTime());
+            cv.put(CalendarContract.Events.CALENDAR_ID,this.calendar_ID);
+            cv.put(CalendarContract.Events.EVENT_TIMEZONE,
+                    Calendar.getInstance().getTimeZone().getID());
+            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, cv);
+        }
     }
 
 
