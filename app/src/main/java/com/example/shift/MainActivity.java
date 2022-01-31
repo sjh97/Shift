@@ -4,16 +4,24 @@ import static java.util.Calendar.SUNDAY;
 import static java.util.Calendar.getInstance;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.OrientationHelper;
 
 import android.Manifest;
+import android.accounts.AccountManager;
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,12 +30,15 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shift.Dialog.OnSettingListener;
 import com.example.shift.Dialog.SettingDialog;
+import com.example.shift.Sync.GooglePlayService;
 import com.example.shift.Utils.SettingHelper;
 import com.example.shift.cosmocalendar.adapter.MonthAdapter;
 import com.example.shift.cosmocalendar.dialog.CalendarDialog;
@@ -38,7 +49,6 @@ import com.example.shift.cosmocalendar.utils.DayContent;
 import com.example.shift.cosmocalendar.utils.SelectionType;
 import com.example.shift.cosmocalendar.view.CalendarView;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -54,7 +64,21 @@ public class MainActivity extends AppCompatActivity {
     private String key = "";
     private String settingkey = "";
     private SettingHelper settingHelper;
-    private final int PERMISSION_NUM = 1000;
+    private final int PERMISSION_NUM = 1010;
+
+    private com.google.api.services.calendar.Calendar mService = null;
+    /**
+     * Google Calendar API 호출 관련 메커니즘 및 AsyncTask을 재사용하기 위해 사용
+     */
+    private int mID = 0;
+
+    static final int REQUEST_ACCOUNT_PICKER = 1000;
+    static final int REQUEST_AUTHORIZATION = 1001;
+    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
+    static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
+    private static final String PREF_ACCOUNT_NAME = "accountName";
+
+    private GooglePlayService googlePlayService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         key = getString(R.string.key);
         settingkey = getString(R.string.settingkey);
         settingHelper = new SettingHelper(this, settingkey);
+        googlePlayService = new GooglePlayService((Activity) this);
 
         int permission1 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR);
         int permission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR);
@@ -147,14 +172,12 @@ public class MainActivity extends AppCompatActivity {
         settingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SettingDialog settingDialog = new SettingDialog(view.getContext(), MainActivity.this, calendarView, new OnSettingListener() {
+                SettingDialog settingDialog = new SettingDialog(view.getContext(), MainActivity.this,
+                        calendarView, googlePlayService,new OnSettingListener() {
                     @Override
                     public void OnSettingListener(List<Pair<Integer, String>> beforeintegerStringList, List<Pair<Integer, String>> integerStringList) {
-                        Log.d("Shift__","1 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
                         dayContent_saving.updateSelectedDaysPrefByColor(view.getContext(), key, beforeintegerStringList, integerStringList);
-                        Log.d("Shift__","2 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(view.getContext(),key));
-                        Log.d("Shift__","6 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
                     }
                 });
                 settingDialog.show();
@@ -242,10 +265,46 @@ public class MainActivity extends AppCompatActivity {
                 calendarView.backToCurrentDay();
             }
         });
-
-
     }
 
-
-
+    /*
+    * 구글 플레이 서비스 업데이트 다이얼로그, 구글 계정 선택 다이얼로그, 인증 다이얼로그에서 되돌아
+    올때 호출된다.
+    */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("TEST__","onActivityResult");
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_GOOGLE_PLAY_SERVICES:
+                Log.e("TEST__","onActivityResult : REQUEST_GOOGLE_PLAY_SERVICES");
+                if (resultCode != RESULT_OK) {
+                    Toast.makeText(this, " 앱을 실행시키려면 구글 플레이 서비스가 필요합니다."
+                            + "구글 플레이 서비스를 설치 후 다시 실행하세요.", Toast.LENGTH_LONG).show();
+                } else {
+                    googlePlayService.getResultsFromApi(mID);
+                }
+                break;
+            case REQUEST_ACCOUNT_PICKER:
+                Log.e("TEST__","onActivityResult : REQUEST_ACCOUNT_PICKER");
+                if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
+                    String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    if (accountName != null) {
+                        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(PREF_ACCOUNT_NAME, accountName);
+                        editor.apply();
+                        googlePlayService.getGoogleAccountCredential().setSelectedAccountName(accountName);
+                        googlePlayService.getResultsFromApi(mID);
+                    }
+                }
+                break;
+            case REQUEST_AUTHORIZATION:
+                Log.e("TEST__","onActivityResult : REQUEST_AUTHORIZATION");
+                if (resultCode == RESULT_OK) {
+                    googlePlayService.getResultsFromApi(mID);
+                }
+                break;
+        }
+    }
 }

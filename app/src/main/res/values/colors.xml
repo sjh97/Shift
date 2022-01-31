@@ -49,4 +49,16 @@
     <color name="pantoneraMousse">#A47864</color>
     <color name="pantoneraBlack">#2D2C2F</color>
     <color name="pantoneraWhite">#EDE3D2</color>
+
+    <color name="googleCalendarColor1">#7986cb</color>
+    <color name="googleCalendarColor2">#33b679</color>
+    <color name="googleCalendarColor3">#8e24aa</color>
+    <color name="googleCalendarColor4">#e67c73</color>
+    <color name="googleCalendarColor5">#f6c026</color>
+    <color name="googleCalendarColor6">#f5511d</color>
+    <color name="googleCalendarColor7">#039be5</color>
+    <color name="googleCalendarColor8">#616161</color>
+    <color name="googleCalendarColor9">#3f51b5</color>
+    <color name="googleCalendarColor10">#0b8043</color>
+    <color name="googleCalendarColor11">#d60000</color>
 </resources>

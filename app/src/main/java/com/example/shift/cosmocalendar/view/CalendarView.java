@@ -694,7 +694,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
                 Calendar calendar = Calendar.getInstance();
                 int current_year = calendar.get(Calendar.YEAR);
                 calendar.setTime(dtstart);
-                calendar.set(current_year, calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                //calendar.set(current_year, calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 dtstart = calendar.getTime();
                 String[] rules = rrule.split(";|=");
                 Log.d("Shift__", "After setting : " + new SimpleDateFormat("yyyy-MM-dd").format(dtstart));

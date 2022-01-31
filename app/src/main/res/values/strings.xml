@@ -5,4 +5,18 @@
     <string name="settingkey">settingKey</string>
     <string name="backgroundColorKey">backgroundColorKey</string>
     <string name="changeColorKey">changeColorKey</string>
+    
+    <string-array name="colorIndex">
+        <item>#7986cb</item>
+        <item>#33b679</item>
+        <item>#8e24aa</item>
+        <item>#e67c73</item>
+        <item>#f6c026</item>
+        <item>#f5511d</item>
+        <item>#039be5</item>
+        <item>#616161</item>
+        <item>#3f51b5</item>
+        <item>#0b8043</item>
+        <item>#d60000</item>
+    </string-array>
 </resources>
