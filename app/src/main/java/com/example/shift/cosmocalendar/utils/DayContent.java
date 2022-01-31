@@ -141,11 +141,11 @@ public class DayContent {
         String saved = preferences.getString(key, null);
         Gson gson = new GsonBuilder().create();
         List<Pair<Integer, String>> integerStringList = new ArrayList<>();
-        integerStringList.add(Pair.create(context.getColor(R.color.color1),""));
-        integerStringList.add(Pair.create(context.getColor(R.color.color2),""));
-        integerStringList.add(Pair.create(context.getColor(R.color.color3),""));
-        integerStringList.add(Pair.create(context.getColor(R.color.color4),""));
-        integerStringList.add(Pair.create(context.getColor(R.color.color5),""));
+        integerStringList.add(Pair.create(context.getColor(R.color.googleCalendarColor4),""));
+        integerStringList.add(Pair.create(context.getColor(R.color.googleCalendarColor6),""));
+        integerStringList.add(Pair.create(context.getColor(R.color.googleCalendarColor7),""));
+        integerStringList.add(Pair.create(context.getColor(R.color.googleCalendarColor11),""));
+        integerStringList.add(Pair.create(context.getColor(R.color.googleCalendarColor9),""));
 
         if(saved != null){
             integerStringList = gson.fromJson(saved, new TypeToken<List<Pair<Integer, String>>>(){}.getType());

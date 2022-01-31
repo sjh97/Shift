@@ -2,6 +2,7 @@ package com.example.shift;
 
 
 import com.example.shift.Sync.GooglePlayService;
+import com.example.shift.Utils.SettingHelper;
 
 import android.Manifest;
 import android.accounts.AccountManager;

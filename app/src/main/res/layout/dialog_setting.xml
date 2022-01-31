@@ -63,7 +63,7 @@
                     android:layout_marginRight="4dp"
                     android:layout_toLeftOf="@id/setting_color_ll_2"
                     android:layout_toRightOf="@+id/edit_button"
-                    android:background="@color/color1">
+                    android:background="@color/googleCalendarColor4">
 
                     <ImageButton
                         android:id="@+id/setting_color_ib_1"
@@ -82,7 +82,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="4dp"
                     android:layout_toLeftOf="@+id/setting_color_ll_3"
-                    android:background="@color/color2">
+                    android:background="@color/googleCalendarColor6">
 
                     <ImageButton
                         android:id="@+id/setting_color_ib_2"
@@ -101,7 +101,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="4dp"
                     android:layout_toLeftOf="@+id/setting_color_ll_4"
-                    android:background="@color/color3">
+                    android:background="@color/googleCalendarColor7">
 
                     <ImageButton
                         android:id="@+id/setting_color_ib_3"
@@ -120,7 +120,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="4dp"
                     android:layout_toLeftOf="@+id/setting_color_ll_5"
-                    android:background="@color/color4">
+                    android:background="@color/googleCalendarColor11">
 
                     <ImageButton
                         android:id="@+id/setting_color_ib_4"
@@ -139,7 +139,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="10dp"
                     android:layout_toLeftOf="@+id/change_color_tv"
-                    android:background="@color/color5">
+                    android:background="@color/googleCalendarColor9">
 
                     <ImageButton
                         android:id="@+id/setting_color_ib_5"
@@ -167,7 +167,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="4dp"
-                android:background="@color/color1"
+                android:background="@color/googleCalendarColor4"
                 android:orientation="horizontal">
 
                 <ImageButton

@@ -8,7 +8,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -28,6 +27,7 @@ public class GooglePlayService{
     final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
     private final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = {CalendarScopes.CALENDAR};
+    private int saved_ID;
 
     private Activity mActivity;
     private Context mContext;
@@ -60,7 +60,8 @@ public class GooglePlayService{
      * 하나라도 만족하지 않으면 해당 사항을 사용자에게 알림.
      */
     public String getResultsFromApi(int ID) {
-        Log.d("TEST__","getResultFromApi");
+        this.saved_ID = ID;
+        Log.d("TEST__","getResultFromApi : " + ID);
         if (!isGooglePlayServicesAvailable()) { // Google Play Services를 사용할 수 없는 경우
             Log.d("TEST__","Google Play Services를 사용할 수 없는 경우");
             acquireGooglePlayServices();
@@ -78,6 +79,10 @@ public class GooglePlayService{
             new CalendarMakeRequestTask(mActivity, mCredential, ID).execute();
         }
         return null;
+    }
+
+    public int getSaved_ID(){
+        return saved_ID;
     }
 
 
@@ -134,6 +139,7 @@ public class GooglePlayService{
                         "[설정]>[권한]에서 권한을 허용할 수 있어요.")
                 .setPermissions(Manifest.permission.GET_ACCOUNTS)
                 .check();
+
     }
 
     /*

@@ -67,10 +67,6 @@ public class MainActivity extends AppCompatActivity {
     private final int PERMISSION_NUM = 1010;
 
     private com.google.api.services.calendar.Calendar mService = null;
-    /**
-     * Google Calendar API 호출 관련 메커니즘 및 AsyncTask을 재사용하기 위해 사용
-     */
-    private int mID = 0;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
@@ -173,11 +169,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 SettingDialog settingDialog = new SettingDialog(view.getContext(), MainActivity.this,
-                        calendarView, googlePlayService,new OnSettingListener() {
+                        calendarView, googlePlayService, settingHelper, new OnSettingListener() {
                     @Override
                     public void OnSettingListener(List<Pair<Integer, String>> beforeintegerStringList, List<Pair<Integer, String>> integerStringList) {
                         dayContent_saving.updateSelectedDaysPrefByColor(view.getContext(), key, beforeintegerStringList, integerStringList);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(view.getContext(),key));
+                        settingHelper = new SettingHelper(view.getContext(), settingkey);
+                        Log.d("TEST__","" + "settingHelper.isExport() : " + settingHelper.isExport());
+                        if(settingHelper.isExport())
+                            googlePlayService.getResultsFromApi(2);
                     }
                 });
                 settingDialog.show();
@@ -198,6 +198,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                         dayContent_saving.setSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
+                        if(settingHelper.isExport())
+                            googlePlayService.getResultsFromApi(2);
                     }
                 });
                 calendarDialog.show();
@@ -224,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         dayContent_saving.deleteSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
+                        googlePlayService.getResultsFromApi(2);
                     }
                 });
                 calendarDialog.show();
@@ -282,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, " 앱을 실행시키려면 구글 플레이 서비스가 필요합니다."
                             + "구글 플레이 서비스를 설치 후 다시 실행하세요.", Toast.LENGTH_LONG).show();
                 } else {
-                    googlePlayService.getResultsFromApi(mID);
+                    googlePlayService.getResultsFromApi(googlePlayService.getSaved_ID());
                 }
                 break;
             case REQUEST_ACCOUNT_PICKER:
@@ -290,19 +293,20 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
                     String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
+                        Log.e("TEST__","onActivityResult : REQUEST_ACCOUNT_PICKER : accountName is not null");
                         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.apply();
                         googlePlayService.getGoogleAccountCredential().setSelectedAccountName(accountName);
-                        googlePlayService.getResultsFromApi(mID);
+                        googlePlayService.getResultsFromApi(googlePlayService.getSaved_ID());
                     }
                 }
                 break;
             case REQUEST_AUTHORIZATION:
                 Log.e("TEST__","onActivityResult : REQUEST_AUTHORIZATION");
                 if (resultCode == RESULT_OK) {
-                    googlePlayService.getResultsFromApi(mID);
+                    googlePlayService.getResultsFromApi(googlePlayService.getSaved_ID());
                 }
                 break;
         }

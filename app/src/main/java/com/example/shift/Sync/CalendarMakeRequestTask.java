@@ -1,20 +1,17 @@
 package com.example.shift.Sync;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
+import android.util.Pair;
 import android.widget.Toast;
 
 import com.example.shift.R;
-import com.example.shift.TestActivity;
+import com.example.shift.Utils.SettingHelper;
 import com.example.shift.cosmocalendar.utils.DayContent;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
@@ -38,14 +35,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
 public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
 
     private com.google.api.services.calendar.Calendar mService = null;
     private int mID;
-    ProgressDialog mProgress;
      final int REQUEST_ACCOUNT_PICKER = 1000;
      final int REQUEST_AUTHORIZATION = 1001;
      final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
@@ -73,13 +68,10 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
         googlePlayService = new GooglePlayService(mActivity);
         mID = ID;
         // Google Calendar API 호출중에 표시되는 ProgressDialog
-        mProgress = new ProgressDialog(mContext);
-        mProgress.setMessage("Google Calendar API 호출 중입니다.");
     }
 
     @Override
     protected void onPreExecute() {
-        mProgress.show();
         Toast.makeText(mActivity.getBaseContext(),"데이터 가져오는 중...",Toast.LENGTH_LONG).show();
     }
 
@@ -89,17 +81,22 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... params) {
         try {
-            if (mID == 1) {
-                return createCalendar();
+            if(mID==1){
+                Log.d("TEST__", "doInBackground : deleteEvent()");
+                return deleteEvent();
             }
             else if (mID == 2) {
-                return addEvent();
+//                return addEvent();
+                Log.d("TEST__", "doInBackground : updateEvent()");
+                return updateEvent();
             }
             else if (mID == 3) {
-                return getEvent();
+                Log.d("TEST__", "doInBackground : deleteEventAll()");
+                return deleteEventAll();
             }
         } catch (Exception e) {
             mLastError = e;
+            Log.e("TEST__","doInBackground : " + e.toString());
             cancel(true);
             return null;
         }
@@ -120,6 +117,7 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
             } catch (UserRecoverableAuthIOException e) {
                 mActivity.startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
             } catch (IOException e) {
+                Log.e("TEST__","CalendarmakeRequestTask : getCalendarID : " + e.toString());
                 e.printStackTrace();
             }
             List<CalendarListEntry> items = calendarList.getItems();
@@ -193,14 +191,12 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String output) {
-        mProgress.hide();
-        Toast.makeText(mContext, output, Toast.LENGTH_LONG).show();
+//        Toast.makeText(mContext, output, Toast.LENGTH_LONG).show();
         if (mID == 3) Toast.makeText(mContext, TextUtils.join("\n\n", eventStrings),Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onCancelled() {
-        mProgress.hide();
         if (mLastError != null) {
             if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
                 googlePlayService.showGooglePlayServicesAvailabilityErrorDialog(
@@ -217,51 +213,108 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
         }
     }
 
-    private String addEvent(String dayContent) {
+    public void updateEvent(DayContent dayContent) throws IOException{
         String calendarID = getCalendarID(mContext.getString(R.string.app_name));
-        if (calendarID == null) {
-            return "캘린더를 먼저 생성하세요.";
-        }
-        Event event = new Event()
-                .setSummary("구글 캘린더 테스트")
-                .setLocation("서울시")
-                .setDescription("캘린더에 이벤트 추가하는 것을 테스트합니다.");
-        java.util.Calendar calander;
-        calander = java.util.Calendar.getInstance();
-        SimpleDateFormat simpledateformat;
-        //simpledateformat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssZ", Locale.KOREA);
-        // Z에 대응하여 +0900이 입력되어 문제 생겨 수작업으로 입력
-        simpledateformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+09:00", Locale.KOREA);
-        String datetime = simpledateformat.format(calander.getTime());
-        DateTime startDateTime = new DateTime(datetime);
-        EventDateTime start = new EventDateTime()
-                .setDateTime(startDateTime)
-                .setTimeZone("Asia/Seoul");
-        event.setStart(start);
-        Log.d("@@@", datetime);
-        DateTime endDateTime = new DateTime(datetime);
-        EventDateTime end = new EventDateTime()
-                .setDateTime(endDateTime)
-                .setTimeZone("Asia/Seoul");
-        event.setEnd(end);
+        ArrayList<String> colorList = new ArrayList<>(Arrays.asList(mContext.getResources().getStringArray(R.array.colorIndex)));
+        DateTime now = new DateTime(dayContent.getContentDate());
+        Events events = mService.events().list(calendarID)//"primary")
+                .setMaxResults(1)
+                .setTimeMin(now)
+                .setOrderBy("startTime")
+                .setSingleEvents(true)
+                .execute();
+        List<Event> items = events.getItems();
+        String eventId = items.get(0).getId();
+        if(eventId != null){
+            try {
+                Event eventToUpdate = new Event();
 
-        try {
-            event = mService.events().insert(calendarID, event).execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("Exception", "Exception : " + e.toString());
+                Date startDate = dayContent.getContentDate();
+                Date endDate = new Date(startDate.getTime() + 86400000); // An all-day event is 1 day (or 86400000 ms) long
+
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String startDateStr = dateFormat.format(startDate);
+                String endDateStr = dateFormat.format(endDate);
+
+                // Out of the 6 methods for creating a DateTime object with no time element, only the String version works
+                DateTime startDateTime = new DateTime(startDateStr);
+                DateTime endDateTime = new DateTime(endDateStr);
+
+                // Must use the setDate() method for an all-day event (setDateTime() is used for timed events)
+                EventDateTime startEventDateTime = new EventDateTime().setDate(startDateTime);
+                EventDateTime endEventDateTime = new EventDateTime().setDate(endDateTime);
+                eventToUpdate.setStart(startEventDateTime);
+                eventToUpdate.setEnd(endEventDateTime);
+                eventToUpdate.setSummary(dayContent.getContentString());
+                String color = "#" + String.format("%06X", (0xFFFFFF & dayContent.getContentColor()));
+                int index = colorList.indexOf(color.toLowerCase());
+                eventToUpdate.setColorId(Integer.toString(index+1));
+
+                eventToUpdate = mService.events().update(calendarID, eventId, eventToUpdate).execute();
+                Log.d("TEST__","updated : " + eventToUpdate.getHtmlLink());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("TEST__", "updateEvent : " + e.toString());
+            }
         }
-        System.out.printf("Event created: %s\n", event.getHtmlLink());
-        Log.e("Event", "created : " + event.getHtmlLink());
-        String eventStrings = "created : " + event.getHtmlLink();
-        return eventStrings;
+    }
+
+    public void deleteEvent(DayContent dayContent) throws IOException{
+        String calendarID = getCalendarID(mContext.getString(R.string.app_name));
+        DateTime now = new DateTime(dayContent.getContentDate());
+        Events events = mService.events().list(calendarID)//"primary")
+                .setMaxResults(1)
+                .setTimeMin(now)
+                .setOrderBy("startTime")
+                .setSingleEvents(true)
+                .execute();
+        List<Event> items = events.getItems();
+        String eventId = items.get(0).getId();
+        if(eventId != null){
+            try {
+                mService.events().delete(calendarID, eventId).execute();
+                Log.d("TEST__","deleted : ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("TEST__", "deleteEvent : " + e.toString());
+            }
+        }
+    }
+
+    public void deleteEvent(String eventId) throws IOException{
+        String calendarID = getCalendarID(mContext.getString(R.string.app_name));
+        if(eventId != null){
+            try {
+                mService.events().delete(calendarID, eventId).execute();
+                Log.d("TEST__","deleted : ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("TEST__", "deleteEvent : " + e.toString());
+            }
+        }
+    }
+
+    public String deleteEventAll() throws IOException{
+        String calendarID = getCalendarID(mContext.getString(R.string.app_name));
+        Events events = mService.events().list(calendarID)//"primary")
+                .setOrderBy("startTime")
+                .setSingleEvents(true)
+                .execute();
+        List<Event> items = events.getItems();
+        if(items != null){
+            for(Event item : items)
+                deleteEvent(item.getId());
+        }
+
+        return "";
     }
 
 
     public String addEvent(DayContent dayContent) {
         String calendarID = getCalendarID(mContext.getString(R.string.app_name));
-        ArrayList<String> colorList = new ArrayList<String>(Arrays.asList(mContext.getResources().getStringArray(R.array.colorIndex)));
+        ArrayList<String> colorList = new ArrayList<>(Arrays.asList(mContext.getResources().getStringArray(R.array.colorIndex)));
         if (calendarID == null) {
+            Log.e("TEST__","addEvent() : 캘린더를 먼저 생성합니다.");
             return "캘린더를 먼저 생성하세요.";
         }
         Event event = new Event();
@@ -280,7 +333,6 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
         // Must use the setDate() method for an all-day event (setDateTime() is used for timed events)
         EventDateTime startEventDateTime = new EventDateTime().setDate(startDateTime);
         EventDateTime endEventDateTime = new EventDateTime().setDate(endDateTime);
-
         event.setStart(startEventDateTime);
         event.setEnd(endEventDateTime);
         event.setSummary(dayContent.getContentString());
@@ -300,24 +352,70 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
         return eventStrings;
     }
 
-
-    public String addEvent() {
+    public String deleteEvent() throws IOException{
         String key = mContext.getString(R.string.key);
         List<DayContent> dayContentList = new DayContent().getSelectedDaysPref(mContext,key);
-        Log.d("TEST__","addEvent() : DayContentList size is : " + dayContentList.size());
         String calendarID = getCalendarID(mContext.getString(R.string.app_name));
         if (calendarID == null) {
+            //Toast.makeText(mContext, "캘린더를 먼저 생성합니다.", Toast.LENGTH_LONG).show();
+            Log.e("TEST__","deleteUpdate() : 캘린더를 먼저 생성합니다.");
+            createCalendar();
+        }
+        for(DayContent dayContent : dayContentList){
+            deleteEvent(dayContent);
+        }
+        return "";
+    }
+
+    public String updateEvent() throws IOException{
+        String key = mContext.getString(R.string.key);
+        String settingKey = mContext.getString(R.string.settingkey);
+        SettingHelper mSettingHelper = new SettingHelper(mContext, settingKey);
+        List<DayContent> dayContentList = new DayContent().getSelectedDaysPref(mContext,key);
+        List<DayContent> beforeSyncDayContentList = mSettingHelper.getBeforeSyncDayContentList();
+
+        Log.d("TEST__","updateEvent() : DayContentList size is : " + dayContentList.size());
+        Log.d("TEST__","updateEvent() : beforeSynDayContentList size is : " + dayContentList.size());
+        String calendarID = getCalendarID(mContext.getString(R.string.app_name));
+        if (calendarID == null) {
+            //Toast.makeText(mContext, "캘린더를 먼저 생성합니다.", Toast.LENGTH_LONG).show();
+            Log.e("TEST__","updateEvent() : 캘린더를 먼저 생성합니다.");
+            createCalendar();
             return "캘린더를 먼저 생성하세요.";
         }
-        Event event = new Event();
 
-        java.util.Calendar calender;
-        calender = java.util.Calendar.getInstance();
+        for(DayContent forSaving : dayContentList){
+            Pair<Boolean, DayContent> have = mSettingHelper.haveSyncDayContent(forSaving);
+            Log.d("TEST__", "have.first : " + have.first + " have.second is null? " + (have.second == null));
+            //sync를 하기전에 이미 dayContent를 가지고 있다면 이미 저장이 되어있다는 것. 따라서 업데이트만 진행한다.
+            if(have.first){
+                //정보 중에 하나라도 바뀐게 있으면 업데이트 한다.
+                if(!forSaving.equals(have.second)){
+                    Log.d("TEST__","updateEvent() : will updateEvent() : " + forSaving.getContentDate());
+                    updateEvent(forSaving);
+                }
 
-        for(DayContent dayContent : dayContentList){
-            addEvent(dayContent);
+            }
+            //sync를 하기전에 없다면 더해준다.
+            else{
+                Log.d("TEST__","updateEvent() : will addEvent() : " + forSaving.getContentDate());
+                addEvent(forSaving);
+            }
         }
-
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for(DayContent saved : beforeSyncDayContentList){
+            boolean have = false;
+            for(DayContent forsaving : dayContentList){
+                if(simpleDateFormat.format(forsaving.getContentDate()).equals(simpleDateFormat.format(saved.getContentDate())))
+                    have = true;
+            }
+            //sync하기 전에는 있는데 dayContentList에는 없다는 것은 삭제한 데이터라는 의미이다.
+            if(!have){
+                Log.d("TEST__","updateEvent() : will deleteEvent() : " + saved.getContentDate());
+                deleteEvent(saved);
+            }
+        }
+        mSettingHelper.setBeforeSyncDayContentList(dayContentList);
         return "";
     }
 }
