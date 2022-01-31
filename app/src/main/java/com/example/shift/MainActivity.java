@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                 rootView.setDrawingCacheEnabled(false);
                 captureView.recycle();
                 captureView = null;
-                startActivity(intent);
+                startActivity(Intent.createChooser(intent,"일정을 공유하세요!"));
             }
         });
 
