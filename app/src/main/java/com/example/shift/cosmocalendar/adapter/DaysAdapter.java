@@ -45,17 +45,6 @@ public class DaysAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.calendarView = calendarView;
     }
 
-    /*
-    public void updateMonthListItems(List<Month> months){
-        final MonthDiffCallback diffCallback = new MonthDiffCallback(this.months, months);
-        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
-
-        this.months.clear();
-        this.months.addAll(months);
-        diffResult.dispatchUpdatesTo(this);
-    }
-     */
-
 
 
     @Override

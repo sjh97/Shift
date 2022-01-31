@@ -2,6 +2,7 @@ package com.example.shift.cosmocalendar.adapter.viewholder;
 
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -9,10 +10,13 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.shift.Dialog.ColorDialog;
+import com.example.shift.Dialog.DayEventDialog;
 import com.example.shift.R;
 import com.example.shift.cosmocalendar.adapter.SyncDataAdapter;
 import com.example.shift.cosmocalendar.model.Day;
 import com.example.shift.cosmocalendar.selection.BaseSelectionManager;
+import com.example.shift.cosmocalendar.selection.JustShowSelectionManager;
 import com.example.shift.cosmocalendar.settings.appearance.ConnectedDayIconPosition;
 import com.example.shift.cosmocalendar.utils.CalendarSyncData;
 import com.example.shift.cosmocalendar.utils.CalendarUtils;
@@ -65,7 +69,10 @@ public class DayHolder extends BaseDayHolder {
 
         boolean isSelected = selectionManager.isDaySelected(day);
         if (isSelected && !day.isDisabled()) {
-            select(day);
+            if(selectionManager instanceof JustShowSelectionManager)
+                showInfo(day);
+            else
+                select(day);
         } else {
             unselect(day);
         }
@@ -102,6 +109,11 @@ public class DayHolder extends BaseDayHolder {
         } else {
             return CalendarUtils.getIconHeight(calendarView.getContext().getResources(), calendarView.getConnectedDayIconRes());
         }
+    }
+
+    private void showInfo(Day day){
+        DayEventDialog dayEventDialog = new DayEventDialog(itemView.getContext(), day);
+        dayEventDialog.show();
     }
 
     private void select(Day day) {

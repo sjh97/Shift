@@ -1,6 +1,7 @@
 package com.example.shift.cosmocalendar.view.delegate;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.example.shift.cosmocalendar.adapter.MonthAdapter;
 import com.example.shift.cosmocalendar.adapter.viewholder.DayHolder;
 import com.example.shift.cosmocalendar.model.Day;
 import com.example.shift.cosmocalendar.selection.BaseSelectionManager;
+import com.example.shift.cosmocalendar.selection.JustShowSelectionManager;
 import com.example.shift.cosmocalendar.selection.MultipleSelectionManager;
 import com.example.shift.cosmocalendar.view.CalendarView;
 
@@ -44,7 +46,8 @@ public class DayDelegate extends BaseDelegate {
                     selectionManager.toggleDay(day);
                     if (selectionManager instanceof MultipleSelectionManager) {
                         daysAdapter.notifyItemChanged(position);
-                    } else {
+                    }
+                    else {
                         monthAdapter.notifyDataSetChanged();
                     }
                 }

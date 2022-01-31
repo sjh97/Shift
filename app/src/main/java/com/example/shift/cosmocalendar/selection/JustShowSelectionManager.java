@@ -1,17 +1,16 @@
 package com.example.shift.cosmocalendar.selection;
 
-
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.shift.cosmocalendar.model.Day;
 
-public class SingleSelectionManager extends BaseSelectionManager {
+public class JustShowSelectionManager extends BaseSelectionManager{
 
     private Day day;
 
-    public SingleSelectionManager(OnDaySelectedListener onDaySelectedListener) {
+    public JustShowSelectionManager(OnDaySelectedListener onDaySelectedListener) {
         this.onDaySelectedListener = onDaySelectedListener;
     }
 

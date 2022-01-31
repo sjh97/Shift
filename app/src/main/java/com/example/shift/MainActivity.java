@@ -142,7 +142,8 @@ public class MainActivity extends AppCompatActivity {
         calendarView = (CalendarView) findViewById(R.id.calendar_view);
         calendarView.setFirstDayOfWeek(SUNDAY);
         calendarView.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
-        calendarView.setSelectionType(SelectionType.NONE);
+//        calendarView.setSelectionType(SelectionType.NONE);
+        calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
         calendarView.setCalendarOrientation(OrientationHelper.HORIZONTAL);
         //Set days you want to connect
         Calendar calendar = Calendar.getInstance();
@@ -209,7 +210,8 @@ public class MainActivity extends AppCompatActivity {
                 calendarDialog.setVisibleIcon();
                 calendarDialog.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
                 calendarDialog.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
-                calendarView.setSelectionType(SelectionType.NONE);
+//                calendarView.setSelectionType(SelectionType.NONE);
+                calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
             }
         });
 
@@ -237,7 +239,8 @@ public class MainActivity extends AppCompatActivity {
                 calendarDialog.setInvisibleIcon();
                 calendarDialog.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
                 calendarDialog.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
-                calendarView.setSelectionType(SelectionType.NONE);
+//                calendarView.setSelectionType(SelectionType.NONE);
+                calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
             }
         });
 

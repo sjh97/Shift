@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.shift.R;
 import com.example.shift.cosmocalendar.FetchMonthsAsyncTask;
@@ -42,6 +43,7 @@ import com.example.shift.cosmocalendar.listeners.OnMonthChangeListener;
 import com.example.shift.cosmocalendar.model.Day;
 import com.example.shift.cosmocalendar.model.Month;
 import com.example.shift.cosmocalendar.selection.BaseSelectionManager;
+import com.example.shift.cosmocalendar.selection.JustShowSelectionManager;
 import com.example.shift.cosmocalendar.selection.MultipleSelectionManager;
 import com.example.shift.cosmocalendar.selection.NoneSelectionManager;
 import com.example.shift.cosmocalendar.selection.OnDaySelectedListener;
@@ -64,6 +66,7 @@ import com.example.shift.cosmocalendar.utils.SelectionType;
 import com.example.shift.cosmocalendar.utils.WeekDay;
 import com.example.shift.cosmocalendar.utils.snap.GravityPagerSnapHelper;
 import com.example.shift.cosmocalendar.utils.snap.GravitySnapHelper;
+import com.example.shift.cosmocalendar.utils.snap.SnapPagerScrollListener;
 import com.example.shift.cosmocalendar.view.customviews.CircleAnimationTextView;
 import com.example.shift.cosmocalendar.view.customviews.SquareTextView;
 import com.example.shift.cosmocalendar.view.delegate.MonthDelegate;
@@ -85,27 +88,28 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
 
     //Recycler
     private SlowdownRecyclerView rvMonths;
+//    private ViewPager2 rvMonths;
     private MonthAdapter monthAdapter;
 
     //Bottom selection bar
     private FrameLayout flBottomSelectionBar;
     //Multiple mode
     private RecyclerView rvMultipleSelectedList;
-    private MultipleSelectionBarAdapter multipleSelectionBarAdapter;
+    public MultipleSelectionBarAdapter multipleSelectionBarAdapter;
     //Range mode
     private LinearLayout llRangeSelection;
 
     //Views
     private LinearLayout llDaysOfWeekTitles;
     private FrameLayout flNavigationButtons;
-    private ImageView ivPrevious;
-    private ImageView ivNext;
+    public ImageView ivPrevious;
+    public ImageView ivNext;
 
     //Helpers
     private SettingsManager settingsManager;
     private BaseSelectionManager selectionManager;
     private GravitySnapHelper snapHelper;
-    //private GravityPagerSnapHelper snapHelper;
+//    private GravityPagerSnapHelper snapHelper;
 
     //Listeners
     private OnMonthChangeListener onMonthChangeListener;
@@ -115,7 +119,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
     private List<CalendarSyncData> syncDataList = new ArrayList<>();
     private int calendar_ID = -100;
 
-    private int lastVisibleMonthPosition = SettingsManager.DEFAULT_MONTH_COUNT / 2;
+    public int lastVisibleMonthPosition = SettingsManager.DEFAULT_MONTH_COUNT / 2;
 
     private FetchMonthsAsyncTask asyncTask;
 
@@ -378,6 +382,10 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
                 selectionManager = new RangeSelectionManager(this);
                 break;
 
+            case SelectionType.JUST_SHOW_INFO:
+                selectionManager = new JustShowSelectionManager(this);
+                break;
+
             case SelectionType.NONE:
                 selectionManager = new NoneSelectionManager();
                 break;
@@ -402,11 +410,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         }
     }
 
-    public void myupdate(){
-        if(monthAdapter != null){
-//            monthAdapter.updateMonthListItems();
-        }
-    }
     //현재 날짜로 돌아가기
     //https://comoi.io/247
     public void backToCurrentDay(){
@@ -423,6 +426,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
     //calendar view 만드는 recyclerview 전체적인 달력 부분을 만든다.
     private void createRecyclerView() {
         rvMonths = new SlowdownRecyclerView(getContext());
+//        rvMonths = new ViewPager2(getContext());
         rvMonths.setId(View.generateViewId());
         rvMonths.setHasFixedSize(true);
         rvMonths.setNestedScrollingEnabled(false);
@@ -540,7 +544,9 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         }
     };
 
-    private int getFirstVisiblePosition(RecyclerView.LayoutManager manager) {
+    //----------------------
+
+    public int getFirstVisiblePosition(RecyclerView.LayoutManager manager) {
         if (manager instanceof LinearLayoutManager) {
             return ((LinearLayoutManager) manager).findFirstVisibleItemPosition();
         } else {
@@ -548,7 +554,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         }
     }
 
-    private void loadAsyncMonths(final boolean future){
+    public void loadAsyncMonths(final boolean future){
         if(asyncTask != null && (asyncTask.getStatus() == AsyncTask.Status.PENDING || asyncTask.getStatus() == AsyncTask.Status.RUNNING))
             return;
 
@@ -1234,7 +1240,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         rvMonths.setOnFlingListener(null);
         if (snapHelper == null) {
             snapHelper = new GravitySnapHelper(settingsManager.getCalendarOrientation() == LinearLayoutManager.VERTICAL ? Gravity.TOP : Gravity.START, true, this);
-            //snapHelper = new GravityPagerSnapHelper(settingsManager.getCalendarOrientation() == LinearLayoutManager.VERTICAL ? Gravity.TOP : Gravity.START, true, this);
+//            snapHelper = new GravityPagerSnapHelper(settingsManager.getCalendarOrientation() == LinearLayoutManager.VERTICAL ? Gravity.TOP : Gravity.START, true, this);
             snapHelper.attachToRecyclerView(rvMonths);
         } else {
             snapHelper.setGravity(settingsManager.getCalendarOrientation() == LinearLayoutManager.VERTICAL ? Gravity.TOP : Gravity.START);
