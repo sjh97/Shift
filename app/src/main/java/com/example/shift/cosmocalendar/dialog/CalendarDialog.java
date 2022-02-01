@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
@@ -48,6 +49,7 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
     private FrameLayout flNavigationButtonsBar;
     private ImageView ivCancel;
     private ImageView ivDone;
+    private TextView tvHelpMention;
     private EditText editText;
     private CalendarView calendarView;
     private LinearLayout colorBunch;
@@ -90,6 +92,7 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
         colorBunch = findViewById(R.id.colorBunch);
         integerStringList = new DayContent().getColorStringPref(editText.getContext(), colorkey);
         editText.setText(integerStringList.get(0).second);
+        tvHelpMention = findViewById(R.id.tv_help_metion);
 
 //        Drawable background = calendarView.getBackground();
         /*
@@ -116,6 +119,11 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
     public void setVisibleIcon(){
         colorBunch.setVisibility(View.VISIBLE);
         editText.setVisibility(View.VISIBLE);
+    }
+
+    public void setTvHelpMention(String mention){
+        tvHelpMention.setText(mention);
+        tvHelpMention.setVisibility(View.VISIBLE);
     }
 
 

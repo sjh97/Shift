@@ -228,7 +228,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                         dayContent_saving.deleteSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
-                        googlePlayService.getResultsFromApi(2);
+                        if(settingHelper.isExport())
+                            googlePlayService.getResultsFromApi(2);
                     }
                 });
                 calendarDialog.show();
@@ -236,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
                 calendarDialog.setSelectionType(SelectionType.MULTIPLE);
                 calendarDialog.setCalendarOrientation(OrientationHelper.HORIZONTAL);
                 calendarDialog.setFirstDayOfWeek(SUNDAY);
+                calendarDialog.setTvHelpMention("삭제하고 싶은 날짜를 선택!");
                 calendarDialog.setInvisibleIcon();
                 calendarDialog.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
                 calendarDialog.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));

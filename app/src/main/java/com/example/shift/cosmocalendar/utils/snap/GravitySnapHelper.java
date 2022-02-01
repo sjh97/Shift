@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+
 package com.example.shift.cosmocalendar.utils.snap;
 
 import android.util.Log;
@@ -22,7 +23,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,7 +39,7 @@ public class GravitySnapHelper extends LinearSnapHelper {
     }
 
     public GravitySnapHelper(int gravity, boolean enableSnapLastItem, SnapListener snapListener) {
-        Log.e("Shift__","GravitySnapHelper : GravitySnapHelper");
+        Log.e("Shift____","GravitySnapHelper : GravitySnapHelper");
         delegate = new GravityDelegate(gravity, enableSnapLastItem, snapListener);
     }
 
@@ -49,11 +49,11 @@ public class GravitySnapHelper extends LinearSnapHelper {
         delegate.attachToRecyclerView(recyclerView);
         super.attachToRecyclerView(recyclerView);
     }
-/*
+
     //https://stackoverflow.com/questions/32324926/swipe-one-item-at-a-time-recyclerview
     @Override
     public int findTargetSnapPosition(RecyclerView.LayoutManager layoutManager, int velocityX, int velocityY){
-        Log.e("Shift__","GravitySnapHelper : findTargetSnapPosition");
+        Log.e("Shift____","GravitySnapHelper : findTargetSnapPosition");
         if (!(layoutManager instanceof RecyclerView.SmoothScroller.ScrollVectorProvider)) {
             return RecyclerView.NO_POSITION;
         }
@@ -73,7 +73,7 @@ public class GravitySnapHelper extends LinearSnapHelper {
         return currentPosition;
     }
 
- */
+
 
     @Override
     public int[] calculateDistanceToFinalSnap(@NonNull RecyclerView.LayoutManager layoutManager,
@@ -87,13 +87,13 @@ public class GravitySnapHelper extends LinearSnapHelper {
         return delegate.findSnapView(layoutManager);
     }
 
-    /**
+    /*
      * Enable snapping of the last item that's snappable.
      * The default value is false, because you can't see the last item completely
      * if this is enabled.
      *
      * @param snap true if you want to enable snapping of the last snappable item
-     */
+    */
     public void enableLastItemSnap(boolean snap) {
         delegate.enableLastItemSnap(snap);
     }
@@ -106,3 +106,4 @@ public class GravitySnapHelper extends LinearSnapHelper {
         void onSnap(int position);
     }
 }
+

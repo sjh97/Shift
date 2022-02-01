@@ -2,7 +2,6 @@ package com.example.shift.cosmocalendar.view;
 
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -34,7 +33,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.shift.R;
 import com.example.shift.cosmocalendar.FetchMonthsAsyncTask;
@@ -66,7 +64,6 @@ import com.example.shift.cosmocalendar.utils.SelectionType;
 import com.example.shift.cosmocalendar.utils.WeekDay;
 import com.example.shift.cosmocalendar.utils.snap.GravityPagerSnapHelper;
 import com.example.shift.cosmocalendar.utils.snap.GravitySnapHelper;
-import com.example.shift.cosmocalendar.utils.snap.SnapPagerScrollListener;
 import com.example.shift.cosmocalendar.view.customviews.CircleAnimationTextView;
 import com.example.shift.cosmocalendar.view.customviews.SquareTextView;
 import com.example.shift.cosmocalendar.view.delegate.MonthDelegate;
@@ -77,18 +74,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 public class CalendarView extends RelativeLayout implements OnDaySelectedListener,
-        AppearanceInterface, DateInterface, CalendarListsInterface, SelectionInterface, MultipleSelectionBarAdapter.ListItemClickListener, GravitySnapHelper.SnapListener {
+        AppearanceInterface, DateInterface, CalendarListsInterface, SelectionInterface,
+        MultipleSelectionBarAdapter.ListItemClickListener, GravitySnapHelper.SnapListener {
+
 
     private List<Day> selectedDays;
 
     //Recycler
     private SlowdownRecyclerView rvMonths;
-//    private ViewPager2 rvMonths;
     private MonthAdapter monthAdapter;
 
     //Bottom selection bar
@@ -109,7 +106,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
     private SettingsManager settingsManager;
     private BaseSelectionManager selectionManager;
     private GravitySnapHelper snapHelper;
-//    private GravityPagerSnapHelper snapHelper;
 
     //Listeners
     private OnMonthChangeListener onMonthChangeListener;
@@ -448,6 +444,71 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         addView(rvMonths);
     }
 
+    /**
+     * Scroll listener for month pagination
+     */
+    private RecyclerView.OnScrollListener pagingScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            //Fix for bug with bottom selection bar and different month item height in horizontal mode (different count of weeks)
+            View view = rvMonths.getLayoutManager().findViewByPosition(getFirstVisiblePosition(rvMonths.getLayoutManager()));
+            if (view != null) {
+                view.requestLayout();
+            }
+
+            if (getCalendarOrientation() == OrientationHelper.HORIZONTAL) {
+                multipleSelectionBarAdapter.notifyDataSetChanged();
+
+                //Hide navigation buttons
+                boolean show = newState != RecyclerView.SCROLL_STATE_DRAGGING;
+                ivPrevious.setVisibility(show ? View.VISIBLE : View.GONE);
+                ivNext.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            final RecyclerView.LayoutManager manager = rvMonths.getLayoutManager();
+            Log.e("Shift____","OnScrollListener : onScrolled : (dx,dy) : " + dx + " , " + dy);
+            int totalItemCount = manager.getItemCount();
+            int firstVisibleItemPosition = getFirstVisiblePosition(manager);
+            lastVisibleMonthPosition = firstVisibleItemPosition;
+
+            if (firstVisibleItemPosition < 2) {
+                loadAsyncMonths(false);
+            } else if (firstVisibleItemPosition >= totalItemCount - 2) {
+                loadAsyncMonths(true);
+            }
+        }
+
+
+    };
+
+    //----------------------
+
+    private void changeSnapHelper() {
+        rvMonths.setOnFlingListener(null);
+        if (snapHelper == null) {
+            snapHelper = new GravitySnapHelper(settingsManager.getCalendarOrientation() == LinearLayoutManager.VERTICAL ? Gravity.TOP : Gravity.START, true, this);
+            snapHelper.attachToRecyclerView(rvMonths);
+        } else {
+            snapHelper.setGravity(settingsManager.getCalendarOrientation() == LinearLayoutManager.VERTICAL ? Gravity.TOP : Gravity.START);
+        }
+    }
+
+    @Override
+    public void onSnap(int position) {
+        Month month = monthAdapter.getData().get(position);
+        if(onMonthChangeListener != null
+                && (previousSelectedMonth == null || !previousSelectedMonth.getMonthName().equals(month.getMonthName()))) {
+            onMonthChangeListener.onMonthChanged(month);
+            previousSelectedMonth = month;
+        }
+    }
+
     public int getrvMonthsHeight(){
         return rvMonths.getHeight();
     }
@@ -502,49 +563,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
                 .setDaySynData(settingsManager.getDaySyncData())
                 .createMonthAdapter();
     }
-
-    /**
-     * Scroll listener for month pagination
-     */
-    private RecyclerView.OnScrollListener pagingScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            //Fix for bug with bottom selection bar and different month item height in horizontal mode (different count of weeks)
-            View view = rvMonths.getLayoutManager().findViewByPosition(getFirstVisiblePosition(rvMonths.getLayoutManager()));
-            if (view != null) {
-                view.requestLayout();
-            }
-
-            if (getCalendarOrientation() == OrientationHelper.HORIZONTAL) {
-                multipleSelectionBarAdapter.notifyDataSetChanged();
-
-                //Hide navigation buttons
-                boolean show = newState != RecyclerView.SCROLL_STATE_DRAGGING;
-                ivPrevious.setVisibility(show ? View.VISIBLE : View.GONE);
-                ivNext.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-
-            super.onScrollStateChanged(recyclerView, newState);
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            final RecyclerView.LayoutManager manager = rvMonths.getLayoutManager();
-
-            int totalItemCount = manager.getItemCount();
-            int firstVisibleItemPosition = getFirstVisiblePosition(manager);
-            lastVisibleMonthPosition = firstVisibleItemPosition;
-
-            if (firstVisibleItemPosition < 2) {
-                loadAsyncMonths(false);
-            } else if (firstVisibleItemPosition >= totalItemCount - 2) {
-                loadAsyncMonths(true);
-            }
-        }
-    };
-
-    //----------------------
 
     public int getFirstVisiblePosition(RecyclerView.LayoutManager manager) {
         if (manager instanceof LinearLayoutManager) {
@@ -628,15 +646,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         setDaySyncData(this.syncDataList);
     }
 
-    public void turnOnSyncCalendar(boolean isFirst){
-        if(isFirst){
-            this.turnOnSyncCalendar();
-        }
-        else{
-
-        }
-    }
-
     public void turnOffSyncCalendar(){
         this.syncDataList = null;
         setDaySyncData(null);
@@ -713,22 +722,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
             syncDataList.add(syncData);
         }
         cur.close();
-    }
-
-    public void sendDataToCalendar(){
-        ContentResolver cr = getContext().getContentResolver();
-        ContentValues cv = new ContentValues();
-        for(DayContent dayContent : getDayContents() ){
-            cv.put(CalendarContract.Events.TITLE, dayContent.getContentString());
-//            cv.put(CalendarContract.Events.DISPLAY_COLOR, dayContent.getContentColor());
-            cv.put(CalendarContract.Events.ALL_DAY, 1);
-            cv.put(CalendarContract.Events.DTSTART, dayContent.getContentDate().getTime());
-            cv.put(CalendarContract.Events.DTEND, dayContent.getContentDate().getTime());
-            cv.put(CalendarContract.Events.CALENDAR_ID,this.calendar_ID);
-            cv.put(CalendarContract.Events.EVENT_TIMEZONE,
-                    Calendar.getInstance().getTimeZone().getID());
-            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, cv);
-        }
     }
 
 
@@ -1236,16 +1229,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         }
     }
 
-    private void changeSnapHelper() {
-        rvMonths.setOnFlingListener(null);
-        if (snapHelper == null) {
-            snapHelper = new GravitySnapHelper(settingsManager.getCalendarOrientation() == LinearLayoutManager.VERTICAL ? Gravity.TOP : Gravity.START, true, this);
-//            snapHelper = new GravityPagerSnapHelper(settingsManager.getCalendarOrientation() == LinearLayoutManager.VERTICAL ? Gravity.TOP : Gravity.START, true, this);
-            snapHelper.attachToRecyclerView(rvMonths);
-        } else {
-            snapHelper.setGravity(settingsManager.getCalendarOrientation() == LinearLayoutManager.VERTICAL ? Gravity.TOP : Gravity.START);
-        }
-    }
+
 
     /*
      * Removes selected day by click in bottom selection bar
@@ -1262,13 +1246,5 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         this.onMonthChangeListener = onMonthChangeListener;
     }
 
-    @Override
-    public void onSnap(int position) {
-        Month month = monthAdapter.getData().get(position);
-        if(onMonthChangeListener != null
-                && (previousSelectedMonth == null || !previousSelectedMonth.getMonthName().equals(month.getMonthName()))) {
-                onMonthChangeListener.onMonthChanged(month);
-            previousSelectedMonth = month;
-        }
-    }
+
 }

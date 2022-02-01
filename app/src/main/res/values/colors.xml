@@ -5,7 +5,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="default_calendar_background_color">@android:color/white</color>
-    <color name="default_month_text_color">#595f66</color>
+    <color name="default_month_text_color">#000000</color>
     <color name="default_other_day_text_color">#c9cacd</color>
     <color name="default_day_text_color">#4a4a4a</color>
     <color name="default_current_day_background">#B3AFAF</color>

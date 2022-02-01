@@ -57,6 +57,10 @@ public class GravityPagerSnapHelper extends PagerSnapHelper {
         delegate.setGravity(gravity);
     }
 
+    public interface SnapListener {
+        void onSnap(int position);
+    }
+
     /**
      * Enable snapping of the last item that's snappable.
      * The default value is false, because you can't see the last item completely

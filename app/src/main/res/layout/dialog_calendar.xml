@@ -26,6 +26,18 @@
                 android:paddingBottom="@dimen/space_1x"
                 android:src="@drawable/ic_close_gray" />
 
+            <TextView
+                android:id="@+id/tv_help_metion"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:text="삭제하고 싶은 날짜를 선택!"
+                android:gravity="center"
+                android:textSize="@dimen/text_large"
+                android:fontFamily="@font/cafe24dongdong"
+                />
+
             <EditText
                 android:id="@+id/edit_button"
                 android:layout_width="wrap_content"
