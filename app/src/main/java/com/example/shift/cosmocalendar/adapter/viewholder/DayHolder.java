@@ -76,6 +76,10 @@ public class DayHolder extends BaseDayHolder {
         } else {
             unselect(day);
         }
+        //선택하는 모드에도 listView가 보이면 listView에 해당하는 부분에 터치가 안 먹혀서 불편함
+        if(!(selectionManager instanceof JustShowSelectionManager)){
+            listView.setVisibility(View.GONE);
+        }
 
         if (day.isCurrent()) {
             ctvDay.setBackground(ContextCompat.getDrawable(ctvDay.getContext(), R.drawable.round_button));
@@ -117,6 +121,7 @@ public class DayHolder extends BaseDayHolder {
     }
 
     private void select(Day day) {
+        Log.d("click_test", "disabled : " + day.isDisabled() + " selected : " + day.isSelected());
         if (day.isFromConnectedCalendar()) {
             if(day.isDisabled()){
                 ctvDay.setTextColor(day.getConnectedDaysDisabledTextColor());
@@ -126,12 +131,17 @@ public class DayHolder extends BaseDayHolder {
             addConnectedDayIcon(true);
         }
         else {
+            Log.d("click_test", "here");
             llDay.setBackgroundColor(calendarView.getSelectedDayBackgroundColor());
             ctvText.setBackgroundColor(calendarView.getSelectedDayBackgroundColor());
             ctvText.setText("");
             ctvDay.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
         if(day.isCurrent()){
+            Log.d("click_test", "isCUrrent");
+            llDay.setBackgroundColor(calendarView.getSelectedDayBackgroundColor());
+            ctvText.setBackgroundColor(calendarView.getSelectedDayBackgroundColor());
+            ctvText.setText("");
             ctvDay.setBackground(null);
             ctvDay.setTextColor(ContextCompat.getColor(ctvDay.getContext(), R.color.default_day_text_color));
         }

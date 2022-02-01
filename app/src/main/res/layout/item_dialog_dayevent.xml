@@ -10,11 +10,11 @@
         android:id="@+id/item_dialog_dayEvent_ll">
 
         <TextView
+            android:textSize="@dimen/text_big"
+            android:padding="@dimen/day_text_padding"
             android:id="@+id/item_dialog_dayEvent_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-
-
 
 </LinearLayout>

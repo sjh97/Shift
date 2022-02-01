@@ -3,21 +3,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_margin="@dimen/space_2x"
     >
 
     <TextView
         android:id="@+id/eventdialog_date"
-        android:layout_width="wrap_content"
+        android:text="Date"
+        android:gravity="center_vertical"
+        android:padding="@dimen/day_text_padding"
+        android:textSize="@dimen/text_large"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <TextView
+        android:layout_marginTop="@dimen/space_1x"
         android:id="@+id/eventdialog_shift"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:textSize="@dimen/text_big"
+        android:padding="@dimen/day_text_padding"
         android:layout_height="wrap_content"/>
 
     <ListView
+        android:layout_marginTop="@dimen/space_1x"
         android:id="@+id/eventdialog_listview"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
 

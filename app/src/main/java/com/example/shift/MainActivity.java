@@ -48,6 +48,9 @@ import com.example.shift.cosmocalendar.settings.lists.connected_days.ConnectedDa
 import com.example.shift.cosmocalendar.utils.DayContent;
 import com.example.shift.cosmocalendar.utils.SelectionType;
 import com.example.shift.cosmocalendar.view.CalendarView;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -87,14 +90,12 @@ public class MainActivity extends AppCompatActivity {
 
         int permission1 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR);
         int permission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR);
-        int permission3 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if(permission1 == PackageManager.PERMISSION_DENIED ||
-                permission2 == PackageManager.PERMISSION_DENIED ||
-                    permission3 == PackageManager.PERMISSION_DENIED){
+                permission2 == PackageManager.PERMISSION_DENIED){
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                 requestPermissions(new String[]{Manifest.permission.READ_CALENDAR,
-                        Manifest.permission.WRITE_CALENDAR, Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_NUM);
+                        Manifest.permission.WRITE_CALENDAR},PERMISSION_NUM);
             }
             return;
         }
@@ -249,20 +250,35 @@ public class MainActivity extends AppCompatActivity {
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //https://gamjatwigim.tistory.com/m/14
-                View rootView = calendarView;
-                rootView.setDrawingCacheEnabled(true);
-                Bitmap captureView = rootView.getDrawingCache();
-                String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), captureView, "title", null);
-                Uri bitmapUri = Uri.parse(bitmapPath);
+                PermissionListener permissionListener = new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted() {
+                        //https://gamjatwigim.tistory.com/m/14
+                        View rootView = calendarView;
+                        rootView.setDrawingCacheEnabled(true);
+                        Bitmap captureView = rootView.getDrawingCache();
+                        String bitmapPath = MediaStore.Images.Media.insertImage(getContentResolver(), captureView, "title", null);
+                        Uri bitmapUri = Uri.parse(bitmapPath);
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType("image/*");
+                        intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+                        rootView.setDrawingCacheEnabled(false);
+                        captureView.recycle();
+                        captureView = null;
+                        startActivity(Intent.createChooser(intent,"일정을 공유하세요!"));
+                    }
 
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
-                rootView.setDrawingCacheEnabled(false);
-                captureView.recycle();
-                captureView = null;
-                startActivity(Intent.createChooser(intent,"일정을 공유하세요!"));
+                    @Override
+                    public void onPermissionDenied(List<String> deniedPermissions) {
+
+                    }
+                };
+                TedPermission.with(view.getContext())
+                        .setPermissionListener(permissionListener)
+                        .setDeniedMessage("공유 기능을 사용하실 수 없어요...ㅠㅜ\n\n" +
+                                "[설정]>[권한]에서 권한을 허용할 수 있어요.")
+                        .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .check();
             }
         });
 
