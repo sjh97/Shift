@@ -181,6 +181,11 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
         dismiss();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        doneClick();
+    }
 
     @Override
     @SelectionType

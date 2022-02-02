@@ -15,6 +15,8 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.dynamicanimation.animation.SpringAnimation;
+
 import com.example.shift.R;
 
 public class ColorDialog extends Dialog{
@@ -22,7 +24,7 @@ public class ColorDialog extends Dialog{
     private TextView colorPickerTextView;
     private ImageView colorPickerImageView;
     private GridLayout colorGridView;
-    private int colorGridColor = Color.parseColor("#000000");
+    private int colorGridColor;
     private OnColorListener onColorListener;
     private TextView okTextView;
     private TextView cancealTextView;
@@ -36,14 +38,20 @@ public class ColorDialog extends Dialog{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mycolorpicker_dialog);
-        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        getWindow().getAttributes().gravity = Gravity.TOP;
+
+        int height = (int) (getContext().getResources().getDisplayMetrics().heightPixels * 0.6);
+        //높이 설정
+        getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, height);
+        getWindow().getAttributes().gravity = Gravity.CENTER_VERTICAL;
+        getWindow().setBackgroundDrawableResource(R.drawable.round_border);
 
         colorPickerTextView = findViewById(R.id.colorPickerGridLayout_preTextView);
         colorPickerImageView = findViewById(R.id.colorPickerGridLayout_preimageView);
         colorGridView = findViewById(R.id.colorPickerGridLayout);
         okTextView = findViewById(R.id.colorPickerOK);
         cancealTextView = findViewById(R.id.colorPickerCanceal);
+
+        colorGridColor = getContext().getColor(R.color.googleCalendarColor1);
 
         for(int i =0; i<colorGridView.getChildCount(); i++){
             final ImageView imageView = (ImageView) colorGridView.getChildAt(i);
@@ -60,10 +68,7 @@ public class ColorDialog extends Dialog{
         okTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(onColorListener != null){
-                    onColorListener.OnColorListener(colorGridColor);
-                }
-                dismiss();
+                doneClick();
             }
         });
         cancealTextView.setOnClickListener(new View.OnClickListener() {
@@ -73,8 +78,19 @@ public class ColorDialog extends Dialog{
             }
         });
 
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        doneClick();
+        dismiss();
+    }
 
-
+    public void doneClick(){
+        if(onColorListener != null){
+            onColorListener.OnColorListener(colorGridColor);
+        }
+        dismiss();
     }
 }

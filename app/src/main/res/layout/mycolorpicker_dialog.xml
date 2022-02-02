@@ -1,152 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/round_border"
+    android:paddingRight="@dimen/space_5x"
+    android:paddingLeft="@dimen/space_5x"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <TextView
+        android:id="@+id/settingView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/colorPickerGridLayoutWrapper"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/space_3x"
+        android:fontFamily="@font/cafe24dongdong"
+        android:text="구글이 정해주는 색깔~"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_very_large" />
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:id="@+id/colorPickerGridLayoutWrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
 
-
-        <TextView
-            android:id="@+id/settingView"
+        <GridLayout
+            android:id="@+id/colorPickerGridLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/space_3x"
-            android:fontFamily="@font/cafe24dongdong"
-            android:text="구글이 정해주는 색깔~"
-            android:textColor="@color/black"
-            android:textSize="30dp" />
-
-        <RelativeLayout
-            android:id="@+id/colorPickerGridLayoutWrapper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/settingView"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp">
-
-            <GridLayout
-                android:id="@+id/colorPickerGridLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:columnCount="4">
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor1" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor2" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor3" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor4" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor5" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor6" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor7" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor8" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor9" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor10" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/googleCalendarColor11" />
-
-
-            </GridLayout>
+            android:columnCount="4">
 
             <ImageView
-                android:id="@+id/colorPickerGridLayout_preimageView"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_below="@+id/colorPickerGridLayout"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="20dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
                 android:background="@color/googleCalendarColor1" />
 
-            <TextView
-                android:id="@+id/colorPickerGridLayout_preTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/colorPickerGridLayout"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="22dp"
-                android:layout_toRightOf="@+id/colorPickerGridLayout_preimageView"
-                android:fontFamily="@font/cafe24dongdong"
-                android:text="#7986CB"
-                android:textSize="20dp" />
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@color/googleCalendarColor2" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@color/googleCalendarColor3" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@color/googleCalendarColor4" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@color/googleCalendarColor5" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@color/googleCalendarColor6" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@color/googleCalendarColor7" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@color/googleCalendarColor8" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@color/googleCalendarColor9" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@color/googleCalendarColor10" />
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:background="@color/googleCalendarColor11" />
 
 
-        </RelativeLayout>
+        </GridLayout>
+
+        <ImageView
+            android:id="@+id/colorPickerGridLayout_preimageView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/colorPickerGridLayout"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/googleCalendarColor1" />
+
+        <TextView
+            android:id="@+id/colorPickerGridLayout_preTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/colorPickerGridLayout"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="22dp"
+            android:layout_toRightOf="@+id/colorPickerGridLayout_preimageView"
+            android:fontFamily="@font/cafe24dongdong"
+            android:text="#7986CB"
+            android:textColor="@color/black"
+            android:textSize="20dp" />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/colorPickerGridLayoutWrapper"
+        android:layout_alignRight="@+id/colorPickerGridLayoutWrapper"
+        android:layout_marginTop="@dimen/space_2x"
+        >
 
         <TextView
             android:id="@+id/colorPickerOK"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/colorPickerGridLayoutWrapper"
-            android:layout_toLeftOf="@+id/colorPickerCanceal"
-            android:layout_margin="10dp"
-            android:text="확인" />
+            android:textColor="@color/black"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/cafe24dongdong"
+            android:text="확인"
+            android:textSize="@dimen/text_large" />
 
         <TextView
             android:id="@+id/colorPickerCanceal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/colorPickerGridLayoutWrapper"
+            android:textColor="@color/black"
             android:layout_alignParentRight="true"
-            android:layout_margin="10dp"
-            android:text="취소"/>
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/cafe24dongdong"
+            android:text="취소"
+            android:textSize="@dimen/text_large" />
 
-    </RelativeLayout>
-</ScrollView>
+    </LinearLayout>
+
+</RelativeLayout>
