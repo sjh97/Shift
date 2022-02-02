@@ -211,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
                 calendarDialog.setVisibleIcon();
                 calendarDialog.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
                 calendarDialog.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
+                calendarDialog.setSyncWithCalendarView(calendarView.getMonths(), calendarView.getCurrentPosition());
 //                calendarView.setSelectionType(SelectionType.NONE);
                 calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
             }
@@ -242,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
                 calendarDialog.setInvisibleIcon();
                 calendarDialog.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
                 calendarDialog.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
+                calendarDialog.setSyncWithCalendarView(calendarView.getMonths(), calendarView.getCurrentPosition());
 //                calendarView.setSelectionType(SelectionType.NONE);
                 calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
             }

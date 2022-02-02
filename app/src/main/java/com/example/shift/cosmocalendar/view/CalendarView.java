@@ -410,10 +410,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         }
     }
 
-    public int getCurrentPosition() {
-        return 0;
-    }
-
     //calendar view 만드는 recyclerview 전체적인 달력 부분을 만든다.
     private void createRecyclerView() {
         rvMonths = new ViewPager2(getContext());
@@ -479,6 +475,26 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         }
         return position;
     }
+
+    public void setMonths(List<Month> months){
+        List<Month> monthList = new ArrayList<>();
+        monthList.addAll(months);
+        monthAdapter.setMonths(monthList);
+    }
+
+    public List<Month> getMonths(){
+        return monthAdapter.getData();
+    }
+
+    public int getCurrentPosition() {
+        return lastVisibleMonthPosition;
+    }
+
+    public void setCurrentPostion(int position){
+        rvMonths.setCurrentItem(position);
+        lastVisibleMonthPosition = position;
+    }
+
 
     //현재 날짜로 돌아가기
     //https://comoi.io/247

@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -12,7 +11,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -22,10 +20,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.shift.R;
 import com.example.shift.cosmocalendar.model.Day;
+import com.example.shift.cosmocalendar.model.Month;
 import com.example.shift.cosmocalendar.settings.appearance.AppearanceInterface;
 import com.example.shift.cosmocalendar.settings.date.DateInterface;
 import com.example.shift.cosmocalendar.settings.lists.CalendarListsInterface;
@@ -108,7 +106,11 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
             colorBunch.getChildAt(i).setOnClickListener(this);
             colorBunch.getChildAt(i).setBackgroundColor(integerStringList.get(i).first);
         }
+    }
 
+    public void setSyncWithCalendarView(List<Month> months, int position){
+        calendarView.setMonths(months);
+        calendarView.setCurrentPostion(position);
     }
 
     public void setInvisibleIcon(){

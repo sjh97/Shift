@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
 
-    private final List<Month> months;
+    private List<Month> months;
 
     private MonthDelegate monthDelegate;
 
@@ -54,6 +54,10 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
         this.syncDataList = syncDataList;
     }
 
+    public void setMonths(List<Month> months){
+        this.months = months;
+    }
+
     public void setSelectionManager(BaseSelectionManager selectionManager) {
         this.selectionManager = selectionManager;
     }
@@ -76,6 +80,7 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
     @Override
     public void onBindViewHolder(MonthHolder holder, int position) {
         final Month month = months.get(position);
+//        Log.d("test___", month.getMonthName() + ":" + month + " : " + position);
         //Sync calendar data imported from default calendar app.
         if(!month.isSynced() && syncDataList != null){
             attachSyncData(month);
