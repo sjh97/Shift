@@ -11,17 +11,39 @@
         android:text="Date"
         android:gravity="center_vertical"
         android:padding="@dimen/day_text_padding"
-        android:textSize="@dimen/text_large"
+        android:textSize="@dimen/text_very_large"
+        android:fontFamily="@font/cafe24dongdong"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <TextView
-        android:layout_marginTop="@dimen/space_1x"
-        android:id="@+id/eventdialog_shift"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:textSize="@dimen/text_big"
-        android:padding="@dimen/day_text_padding"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/eventdialog_shift_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:background="@drawable/circle_border"
+            android:layout_margin="@dimen/space_1x"/>
+
+
+        <TextView
+            android:id="@+id/eventdialog_shift"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_big"
+            android:padding="@dimen/day_text_padding"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            />
+
+    </LinearLayout>
+
+
 
     <ListView
         android:layout_marginTop="@dimen/space_1x"

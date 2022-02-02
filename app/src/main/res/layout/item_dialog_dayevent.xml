@@ -9,10 +9,21 @@
         android:layout_height="wrap_content"
         android:id="@+id/item_dialog_dayEvent_ll">
 
+        <ImageView
+            android:id="@+id/item_dialog_dayEvent_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:background="@drawable/circle_border"
+            android:layout_margin="@dimen/space_1x"/>
+
         <TextView
             android:textSize="@dimen/text_big"
             android:padding="@dimen/day_text_padding"
             android:id="@+id/item_dialog_dayEvent_tv"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
