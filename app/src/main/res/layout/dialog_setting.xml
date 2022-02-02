@@ -9,12 +9,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/default_calendar_head_background_color"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/space_1x"
+        android:paddingBottom="@dimen/space_1x"
         >
+
+        <ImageButton
+            android:id="@+id/setting_done_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chevron_left_gray"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center_vertical"
+            />
 
         <TextView
             android:id="@+id/fl_navigation_buttons_bar"
-            style="@style/CustomTextView_Large"
+            style="@style/CustomTextView_VeryLarge"
             android:text="설정"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/cafe24dongdong"
             />
     </LinearLayout>
 
@@ -25,157 +39,205 @@
         android:layout_marginTop="@dimen/space_1x"
         >
 
-        <TextView
-            android:id="@+id/setting_color_tv"
-            style="@style/CustomTextView_large_center"
-            android:text="근무 설정 " />
-
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/setting_color_tv"
             android:layout_alignParentLeft="true">
 
-            <EditText
-                android:id="@+id/setting_edit_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:hint="입력하세요" />
-
             <LinearLayout
-                android:id="@+id/setting_colorBunch"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@+id/setting_edit_button"
-                android:orientation="horizontal">
+                android:id="@+id/setting_colorBunch_ll"
+                >
 
-                <LinearLayout
-                    android:id="@+id/setting_color_ll_1"
+                <TextView
+                    android:id="@+id/setting_title"
+                    style="@style/CustomTextView_Mid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_toLeftOf="@id/setting_color_ll_2"
-                    android:layout_toRightOf="@+id/edit_button"
-                    android:background="@color/googleCalendarColor4">
-
-                    <ImageButton
-                        android:id="@+id/setting_color_ib_1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#00000000"
-                        android:src="@drawable/ic_baseline_done_24"
-                        android:visibility="visible" />
-                </LinearLayout>
+                    android:text="근무 형태" />
 
                 <LinearLayout
-                    android:id="@+id/setting_color_ll_2"
+                    android:id="@+id/setting_colorBunch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/setting_title"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="4dp"
-                    android:layout_toLeftOf="@+id/setting_color_ll_3"
-                    android:background="@color/googleCalendarColor6">
+                    android:orientation="horizontal">
 
-                    <ImageButton
-                        android:id="@+id/setting_color_ib_2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#00000000"
-                        android:src="@drawable/ic_baseline_done_24"
-                        android:visibility="invisible" />
-                </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/setting_color_ll_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@id/setting_color_ll_2"
+                        android:layout_toRightOf="@+id/edit_button"
+                        android:background="@color/googleCalendarColor4">
 
-                <LinearLayout
-                    android:id="@+id/setting_color_ll_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="4dp"
-                    android:layout_toLeftOf="@+id/setting_color_ll_4"
-                    android:background="@color/googleCalendarColor7">
+                        <ImageButton
+                            android:id="@+id/setting_color_ib_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#00000000"
+                            android:src="@drawable/ic_baseline_done_24"
+                            android:visibility="visible" />
+                    </LinearLayout>
 
-                    <ImageButton
-                        android:id="@+id/setting_color_ib_3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#00000000"
-                        android:src="@drawable/ic_baseline_done_24"
-                        android:visibility="invisible" />
-                </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/setting_color_ll_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@+id/setting_color_ll_3"
+                        android:background="@color/googleCalendarColor6">
 
-                <LinearLayout
-                    android:id="@+id/setting_color_ll_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="4dp"
-                    android:layout_toLeftOf="@+id/setting_color_ll_5"
-                    android:background="@color/googleCalendarColor11">
+                        <ImageButton
+                            android:id="@+id/setting_color_ib_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#00000000"
+                            android:src="@drawable/ic_baseline_done_24"
+                            android:visibility="invisible" />
+                    </LinearLayout>
 
-                    <ImageButton
-                        android:id="@+id/setting_color_ib_4"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#00000000"
-                        android:src="@drawable/ic_baseline_done_24"
-                        android:visibility="invisible" />
-                </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/setting_color_ll_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@+id/setting_color_ll_4"
+                        android:background="@color/googleCalendarColor7">
 
-                <LinearLayout
-                    android:id="@+id/setting_color_ll_5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="10dp"
-                    android:layout_toLeftOf="@+id/change_color_tv"
-                    android:background="@color/googleCalendarColor9">
+                        <ImageButton
+                            android:id="@+id/setting_color_ib_3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#00000000"
+                            android:src="@drawable/ic_baseline_done_24"
+                            android:visibility="invisible" />
+                    </LinearLayout>
 
-                    <ImageButton
-                        android:id="@+id/setting_color_ib_5"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#00000000"
-                        android:src="@drawable/ic_baseline_done_24"
-                        android:visibility="invisible" />
+                    <LinearLayout
+                        android:id="@+id/setting_color_ll_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@+id/setting_color_ll_5"
+                        android:background="@color/googleCalendarColor11">
+
+                        <ImageButton
+                            android:id="@+id/setting_color_ib_4"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#00000000"
+                            android:src="@drawable/ic_baseline_done_24"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/setting_color_ll_5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@+id/change_color_tv"
+                        android:background="@color/googleCalendarColor9">
+
+                        <ImageButton
+                            android:id="@+id/setting_color_ib_5"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#00000000"
+                            android:src="@drawable/ic_baseline_done_24"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
 
-<!--            <TextView-->
-<!--                android:id="@+id/setting_check_color_button"-->
-<!--                style="@style/CustomTextView_Mid"-->
-<!--                android:layout_centerVertical="true"-->
-<!--                android:layout_toLeftOf="@+id/setting_color_button"-->
-<!--                android:text="확인" />-->
-
             <LinearLayout
-                android:id="@+id/setting_color_button"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="4dp"
-                android:background="@color/googleCalendarColor4"
-                android:orientation="horizontal">
+                android:layout_below="@+id/setting_colorBunch_ll"
+                android:layout_marginStart="@dimen/space_1x"
+                android:layout_marginTop="@dimen/space_1x"
+                android:layout_marginEnd="@dimen/space_1x"
+                android:layout_marginBottom="@dimen/space_1x"
+                android:background="@drawable/round_border_black"
+                android:padding="@dimen/space_1x"
+                android:orientation="vertical">
 
-                <ImageButton
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#00000000"
-                    android:src="@drawable/ic_baseline_done_24"
-                    android:visibility="invisible" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="근무명 : "
+                        android:layout_gravity="center_vertical"
+                        android:textSize="@dimen/text_big"
+                        />
+
+                    <EditText
+                        android:id="@+id/setting_edit_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="@dimen/text_big"
+                        android:hint="입력하세요" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="@dimen/day_text_padding"
+                    android:paddingBottom="@dimen/day_text_padding"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="색상 : "
+                        android:layout_gravity="center_vertical"
+                        android:textSize="@dimen/text_big"
+                        />
+
+                    <LinearLayout
+                        android:layout_marginStart="@dimen/space_1x"
+                        android:id="@+id/setting_color_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="4dp"
+                        android:background="@color/googleCalendarColor4"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#00000000"
+                            android:src="@drawable/ic_baseline_done_24"
+                            android:visibility="invisible" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -232,11 +294,6 @@
     </LinearLayout>
 
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/setting_done_button"
-        style="@style/CustomTextView_Mid"
-        android:text="확인"/>
 
 
 

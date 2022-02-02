@@ -24,6 +24,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -47,7 +48,7 @@ import java.util.List;
 public class SettingDialog extends Dialog implements View.OnClickListener{
 
     //Views
-    private TextView ivDone;
+    private ImageButton ivDone;
     private EditText editText;
     private LinearLayout changeColorButton;
     private LinearLayout setting_colorBunch;
@@ -238,5 +239,11 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
         else
             dismiss();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        doneClick();
     }
 }

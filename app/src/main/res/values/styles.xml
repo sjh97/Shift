@@ -27,6 +27,14 @@
         <item name="android:padding">6dp</item>
     </style>
 
+    <style name="CustomTextView_VeryLarge" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:padding">3dp</item>
+    </style>
+
     <style name="CustomSwitch_Mid" parent="Widget.AppCompat.CompoundButton.Switch">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
