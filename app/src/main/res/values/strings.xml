@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Customizable Calendar</string>
+    <string name="app_name">교대해줘</string>
     <string name="key">selectedDays</string>
     <string name="colorkey">colorKey</string>
     <string name="settingkey">settingKey</string>

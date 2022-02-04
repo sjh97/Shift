@@ -189,12 +189,12 @@ public class SettingHelper {
         public String myCalendarID = null;
         public List<CalendarSyncData> calendarSyncDataList = new ArrayList<>();
         public List<Pair<Integer, String>> colorStringList = Arrays.asList(
-                Pair.create(context.getColor(R.color.googleCalendarColor4),"D"),
-                Pair.create(context.getColor(R.color.googleCalendarColor6),"E"),
-                Pair.create(context.getColor(R.color.googleCalendarColor7),"N"),
-                Pair.create(context.getColor(R.color.googleCalendarColor11),"S"),
-                Pair.create(context.getColor(R.color.googleCalendarColor9),"H"),
-                Pair.create(context.getColor(R.color.googleCalendarColor2),"?")
+                Pair.create(context.getColor(R.color.pantoneraPink),"D"),
+                Pair.create(context.getColor(R.color.pantoneraBlue),"E"),
+                Pair.create(context.getColor(R.color.pantoneraGreen),"N"),
+                Pair.create(context.getColor(R.color.pantoneraWheat),"S"),
+                Pair.create(context.getColor(R.color.pantoneraRose),"H"),
+                Pair.create(context.getColor(R.color.pantoneraYellow),"?")
                 );
 
          public void printAll(String key){

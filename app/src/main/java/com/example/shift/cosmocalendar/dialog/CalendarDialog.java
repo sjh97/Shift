@@ -175,12 +175,9 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
                 id = i;
                 //이 구문을 onDaysSelected 앞에 둬야 색깔 정보가 업데이트 되고 이후 onDaysSelected가 실행된다.
                 DayContent dayContent = new DayContent();
-//                List<Pair<Integer, String>> integerStringList = dayContent.getColorStringPref(this.getContext(), colorkey);
                 List<Pair<Integer, String>> integerStringList = new SettingHelper(getContext(), settingkey).getColorStringList();
                 integerStringList.set(i,Pair.create(color,editText.getText().toString()));
-//                dayContent.setColorStringPref(this.getContext(),colorkey, integerStringList);
                 new SettingHelper(getContext(), settingkey).setColorStringList(integerStringList);
-//                dayContent.updateSelectedDaysPrefByColor(this.getContext(),key,editText.getText().toString(),color);
                 dayContent.updateSelectedDaysPrefByColor(this.getContext(),key,editText.getText().toString(),color,id);
                 break;
             }

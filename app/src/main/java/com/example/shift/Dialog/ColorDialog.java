@@ -26,8 +26,6 @@ public class ColorDialog extends Dialog{
     private GridLayout colorGridView;
     private int colorGridColor;
     private OnColorListener onColorListener;
-    private TextView okTextView;
-    private TextView cancealTextView;
 
     protected ColorDialog(Context context, OnColorListener onColorListener){
         super(context);
@@ -48,8 +46,6 @@ public class ColorDialog extends Dialog{
         colorPickerTextView = findViewById(R.id.colorPickerGridLayout_preTextView);
         colorPickerImageView = findViewById(R.id.colorPickerGridLayout_preimageView);
         colorGridView = findViewById(R.id.colorPickerGridLayout);
-        okTextView = findViewById(R.id.colorPickerOK);
-        cancealTextView = findViewById(R.id.colorPickerCanceal);
 
         colorGridColor = getContext().getColor(R.color.googleCalendarColor1);
 
@@ -64,19 +60,6 @@ public class ColorDialog extends Dialog{
                 }
             });
         }
-
-        okTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                doneClick();
-            }
-        });
-        cancealTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
 
     }
 

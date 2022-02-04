@@ -66,7 +66,7 @@
                     android:layout_marginRight="4dp"
                     android:layout_toLeftOf="@id/setting_color_ll_2"
                     android:layout_toRightOf="@+id/edit_button"
-                    android:background="@color/googleCalendarColor4">
+                    android:background="@color/pantoneraPink">
 
                     <ImageButton
                         android:id="@+id/color1_ibtn"
@@ -85,7 +85,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="4dp"
                     android:layout_toLeftOf="@+id/setting_color_ll_3"
-                    android:background="@color/googleCalendarColor6">
+                    android:background="@color/pantoneraBlue">
 
                     <ImageButton
                         android:id="@+id/color2_ibtn"
@@ -104,7 +104,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="4dp"
                     android:layout_toLeftOf="@+id/setting_color_ll_4"
-                    android:background="@color/googleCalendarColor7">
+                    android:background="@color/pantoneraGreen">
 
                     <ImageButton
                         android:id="@+id/color3_ibtn"
@@ -123,7 +123,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="4dp"
                     android:layout_toLeftOf="@+id/setting_color_ll_5"
-                    android:background="@color/googleCalendarColor11">
+                    android:background="@color/pantoneraWheat">
 
                     <ImageButton
                         android:id="@+id/color4_ibtn"
@@ -141,7 +141,7 @@
                     android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="4dp"
-                    android:background="@color/googleCalendarColor9">
+                    android:background="@color/pantoneraRose">
 
                     <ImageButton
                         android:id="@+id/color5_ibtn"
@@ -159,7 +159,7 @@
                     android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="4dp"
-                    android:background="@color/googleCalendarColor2">
+                    android:background="@color/pantoneraYellow">
 
                     <ImageButton
                         android:id="@+id/color6_ibtn"

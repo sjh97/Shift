@@ -110,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
         calendarView = (CalendarView) findViewById(R.id.calendar_view);
         calendarView.setFirstDayOfWeek(SUNDAY);
         calendarView.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
-//        calendarView.setSelectionType(SelectionType.NONE);
-        calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
+        calendarView.setSelectionType(SelectionType.NONE);
+//        calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
         calendarView.setCalendarOrientation(OrientationHelper.HORIZONTAL);
 
         if(settingHelper.isImport()){
@@ -129,11 +129,21 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void OnSettingListener(List<Pair<Integer, String>> beforeintegerStringList, List<Pair<Integer, String>> integerStringList) {
                         dayContent_saving.updateSelectedDaysPrefByColor(view.getContext(), key, integerStringList);
-//                        dayContent_saving.updateSelectedDaysPrefByColor(view.getContext(), key, beforeintegerStringList, integerStringList);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(view.getContext(),key));
                         settingHelper = new SettingHelper(view.getContext(), settingkey);
                         Log.d("TEST__","" + "settingHelper.isExport() : " + settingHelper.isExport());
-                        if(settingHelper.isExport())
+                        boolean isDiff = false;
+                        for(int i = 0;i<beforeintegerStringList.size();i++){
+                            Pair<Integer,String> before = beforeintegerStringList.get(i);
+                            Pair<Integer,String> after = integerStringList.get(i);
+                            Log.d("TEST__","" + "settingButton : " + before.first + " : " + after.first + " : " + (before.first - after.first != 0));
+                            Log.d("TEST__","" + "settingButton : " + before.second + " : " + after.second + " : " + (!before.second.replace(after.second,"").equals("")));
+                            if((before.first - after.first != 0) || !before.second.replace(after.second,"").equals("")){
+                                isDiff = true;
+                                break;
+                            }
+                        }
+                        if(settingHelper.isExport() && isDiff)
                             googlePlayService.getResultsFromApi(2);
                     }
                 });
@@ -167,9 +177,9 @@ public class MainActivity extends AppCompatActivity {
                 calendarDialog.setVisibleIcon();
                 calendarDialog.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
                 calendarDialog.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
-                calendarDialog.setSyncWithCalendarView(calendarView.getMonths(), calendarView.getCurrentPosition());
-//                calendarView.setSelectionType(SelectionType.NONE);
-                calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
+                //calendarDialog.setSyncWithCalendarView(calendarView.getMonths(), calendarView.getCurrentPosition());
+                calendarView.setSelectionType(SelectionType.NONE);
+//                calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
             }
         });
 
@@ -199,9 +209,9 @@ public class MainActivity extends AppCompatActivity {
                 calendarDialog.setInvisibleIcon();
                 calendarDialog.setWeekendDays(new HashSet(){{add(SUNDAY); add(Calendar.SATURDAY);}});
                 calendarDialog.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
-                calendarDialog.setSyncWithCalendarView(calendarView.getMonths(), calendarView.getCurrentPosition());
-//                calendarView.setSelectionType(SelectionType.NONE);
-                calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
+                //calendarDialog.setSyncWithCalendarView(calendarView.getMonths(), calendarView.getCurrentPosition());
+                calendarView.setSelectionType(SelectionType.NONE);
+//                calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
             }
         });
 

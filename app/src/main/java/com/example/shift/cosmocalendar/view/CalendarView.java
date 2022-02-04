@@ -261,6 +261,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         createBottomSelectionBar();
     }
 
+
     /**
      * Defines days of week displaying according to calendar orientation
      * HORIZONTAL - displaying below month name and above dates

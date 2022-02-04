@@ -45,6 +45,7 @@ public class SettingsManager implements AppearanceInterface, DateInterface, Cale
         selectionModel = new SelectionModel();
     }
 
+
     @Override
     public List<DayContent> getDayContents() {
         return calendarListsModel.getDayContents();

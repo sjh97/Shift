@@ -140,7 +140,7 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String output) {
 //        Toast.makeText(mContext, output, Toast.LENGTH_LONG).show();
         Log.d("TEST__","CalendarMakeRequestTask : onPostExecute : " + mID);
-        if (mID == 3) Toast.makeText(mContext, TextUtils.join("\n\n", eventStrings),Toast.LENGTH_LONG).show();
+//        if (mID == 3) Toast.makeText(mContext, TextUtils.join("\n\n", eventStrings),Toast.LENGTH_LONG).show();
         if(delegate != null && mID == 4){
             Log.d("TEST__","CalendarMakeRequestTask : onTaskDone");
             delegate.onTaskDone();
@@ -371,7 +371,7 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
 //                int index = colorList.indexOf(color.toLowerCase());
 //                eventToUpdate.setColorId(Integer.toString(index+1));
                 int index = dayContent.getContentColorId();
-                eventToUpdate.setColorId(Integer.toString(index));
+                eventToUpdate.setColorId(Integer.toString(index+1));
 
                 eventToUpdate = mService.events().update(calendarID, eventId, eventToUpdate).execute();
                 Log.d("TEST__","updated : " + eventToUpdate.getHtmlLink());
@@ -464,7 +464,7 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
 //        event.setColorId(Integer.toString(index+1));
 
         int index = dayContent.getContentColorId();
-        event.setColorId(Integer.toString(index));
+        event.setColorId(Integer.toString(index+1));
 
         try {
             event = mService.events().insert(calendarID, event).execute();
@@ -543,6 +543,6 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
             }
         }
         mSettingHelper.setBeforeSyncDayContentList(dayContentList);
-        return "";
+        return "데이터 전송 완료!";
     }
 }

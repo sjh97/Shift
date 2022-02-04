@@ -34,6 +34,9 @@ import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
+
+import com.example.shift.ColorPicker.CustomFlag;
+import com.example.shift.ColorPicker.MyColorPickerDialog;
 import com.example.shift.MainActivity;
 import com.example.shift.R;
 import com.example.shift.Sync.GooglePlayService;
@@ -44,6 +47,7 @@ import com.example.shift.cosmocalendar.view.CalendarView;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.skydoves.colorpickerview.ColorEnvelope;
+import com.skydoves.colorpickerview.ColorPickerView;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
 import java.util.ArrayList;
@@ -194,15 +198,10 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
                 //colorview is colorll (R.id.color1_btn)
                 LinearLayout colorView = (LinearLayout) setting_colorBunch.getChildAt(i);
                 if(colorView.getChildAt(0).getVisibility() == View.VISIBLE){
-                    new ColorDialog(getContext(), new OnColorListener() {
-                        @Override
-                        public void OnColorListener(int selectedColor) {
-                            colorView.setBackgroundColor(selectedColor);
-                            v.setBackgroundColor(selectedColor);
-                        }
-                    }).show();
-//                    MyColorPickerDialog.Builder builder = makeColorPickerBuilder(new ArrayList<>(Arrays.asList(colorView, v)));
-//                    builder.show();
+                    MyColorPickerDialog.Builder builder = makeColorPickerBuilder(new ArrayList<>(Arrays.asList(colorView, v)));
+                    ColorPickerView colorPickerView = builder.getColorPickerView();
+                    colorPickerView.setFlagView(new CustomFlag(getContext(), R.layout.custom_flag));
+                    builder.show();
                     break;
                 }
             }
@@ -271,5 +270,43 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
     public void onBackPressed() {
         super.onBackPressed();
         doneClick();
+    }
+
+    public MyColorPickerDialog.Builder makeColorPickerBuilder(List<View> willbeChangedViews){
+        MyColorPickerDialog.Builder builder;
+        builder = new MyColorPickerDialog.Builder(getContext());
+        builder.setPreferenceName("MyColorPickerDialog")
+                .setPositiveButton("OK", new ColorEnvelopeListener() {
+                    @Override
+                    public void onColorSelected(ColorEnvelope envelope, boolean fromUser) {
+                        int getGridColor = builder.getColorGridColor();
+                        int color;
+                        SharedPreferences preferences = getContext().getSharedPreferences(getContext().getApplicationContext().getString(R.string.changeColorKey)
+                                , getContext().MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        if(getGridColor == Color.parseColor("#000000")){
+                            editor.putInt(getContext().getApplicationContext().getString(R.string.backgroundColorKey), envelope.getColor());
+                            editor.commit();
+                            color = envelope.getColor();
+                        }
+                        else{
+                            editor.putInt(getContext().getApplicationContext().getString(R.string.backgroundColorKey), getGridColor);
+                            editor.commit();
+                            color = getGridColor;
+                        }
+                        for(View view : willbeChangedViews)
+                            view.setBackgroundColor(color);
+                    }
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .attachAlphaSlideBar(false)
+                .attachBrightnessSlideBar(true);
+
+        return builder;
     }
 }
