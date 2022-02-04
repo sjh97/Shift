@@ -1,10 +1,7 @@
 package com.example.shift.cosmocalendar.adapter;
 
-import android.util.Log;
 import android.view.ViewGroup;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.shift.cosmocalendar.adapter.viewholder.MonthHolder;
 import com.example.shift.cosmocalendar.model.Day;
 import com.example.shift.cosmocalendar.model.Month;
@@ -20,7 +17,6 @@ import com.example.shift.cosmocalendar.view.delegate.DayDelegate;
 import com.example.shift.cosmocalendar.view.delegate.DayOfWeekDelegate;
 import com.example.shift.cosmocalendar.view.delegate.MonthDelegate;
 import com.example.shift.cosmocalendar.view.delegate.OtherDayDelegate;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -80,7 +76,7 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
     @Override
     public void onBindViewHolder(MonthHolder holder, int position) {
         final Month month = months.get(position);
-//        Log.d("test___", month.getMonthName() + ":" + month + " : " + position);
+
         //Sync calendar data imported from default calendar app.
         if(!month.isSynced() && syncDataList != null){
             attachSyncData(month);
@@ -184,18 +180,14 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
     public void setDayContents(List<DayContent> dayContents){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<DayContent> deleted = new ArrayList<>();
-        Log.d("Shift__","4-1 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         if(this.dayContents.size() > dayContents.size()){
             deleted.addAll(this.dayContents);
             for(DayContent dayContent : dayContents){
                 deleted.remove(deleted.indexOf(dayContent));
             }
         }
-        Log.d("Shift__", "DayContent size() : " + dayContents.size());
-        Log.d("Shift__","4-2 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         for (Month month : months){
             //추가되거나 변경될 때
-            //Log.d("Shift__","4-2 : start " + month.getMonthName() + " : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
             for(Day day : month.getDays()){
                 String dayDate = simpleDateFormat.format(day.getCalendar().getTime());
                 for(DayContent selected : dayContents){
@@ -217,9 +209,7 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
                     }
                 }
             }
-            //Log.d("Shift__","4-3 : end " + month.getMonthName() + " : "+ new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         }
-        Log.d("Shift__","4-3 : " + new SimpleDateFormat("mm:ss").format(System.currentTimeMillis()));
         this.dayContents = dayContents;
     }
 
@@ -242,8 +232,6 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
         }
         month.setSynced(true);
     }
-
-
 
     private void setDaysAccordingToSet(Set<Long> days, DayFlag dayFlag) {
         if (days != null && !days.isEmpty()) {

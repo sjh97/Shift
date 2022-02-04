@@ -1,8 +1,10 @@
 package com.example.shift.Sync;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,7 +13,10 @@ import android.widget.Toast;
 
 import com.example.shift.R;
 import com.example.shift.Utils.SettingHelper;
+import com.example.shift.cosmocalendar.model.Day;
+import com.example.shift.cosmocalendar.utils.CalendarSyncData;
 import com.example.shift.cosmocalendar.utils.DayContent;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
@@ -30,6 +35,7 @@ import com.google.api.services.calendar.model.Events;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,26 +53,49 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
      final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
      private final String PREF_ACCOUNT_NAME = "accountName";
      private final String[] SCOPES = {CalendarScopes.CALENDAR};
+     public AsyncCallback delegate;
+     private String settingkey = "";
+     public static int GET_EVENT = 4;
 
 
     private Exception mLastError = null;
     private Activity mActivity;
     List<String> eventStrings = new ArrayList<>();
     private Context mContext;
-    private GooglePlayService googlePlayService;
 
     public CalendarMakeRequestTask(Activity activity, GoogleAccountCredential credential, int ID) {
         Log.e("TEST__","MakeRequestTask");
         mActivity = activity;
         mContext = (Context) mActivity;
+        settingkey = mContext.getString(R.string.settingkey);
         HttpTransport transport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
         mService = new com.google.api.services.calendar.Calendar
                 .Builder(transport, jsonFactory, credential)
                 .setApplicationName(mContext.getString(R.string.app_name))
                 .build();
-        googlePlayService = new GooglePlayService(mActivity);
         mID = ID;
+        // Google Calendar API 호출중에 표시되는 ProgressDialog
+    }
+
+    public CalendarMakeRequestTask(Activity activity, GoogleAccountCredential credential, int ID, AsyncCallback asyncCallback) {
+        Log.e("TEST__","MakeRequestTask with delegate");
+        mActivity = activity;
+        mContext = (Context) mActivity;
+        HttpTransport transport = AndroidHttp.newCompatibleTransport();
+        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+        settingkey = mContext.getString(R.string.settingkey);
+        String accountName = mActivity.getPreferences(Context.MODE_PRIVATE)
+                .getString(PREF_ACCOUNT_NAME, null);
+        if(accountName != null)
+            credential.setSelectedAccountName(accountName);
+
+        mService = new com.google.api.services.calendar.Calendar
+                .Builder(transport, jsonFactory, credential)
+                .setApplicationName(mContext.getString(R.string.app_name))
+                .build();
+        mID = ID;
+        this.delegate = asyncCallback;
         // Google Calendar API 호출중에 표시되는 ProgressDialog
     }
 
@@ -94,6 +123,10 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
                 Log.d("TEST__", "doInBackground : deleteEventAll()");
                 return deleteEventAll();
             }
+            else if (mID == GET_EVENT){
+                Log.d("TEST__", "doInBackground : getEvent()");
+                return getEvent();
+            }
         } catch (Exception e) {
             mLastError = e;
             Log.e("TEST__","doInBackground : " + e.toString());
@@ -102,6 +135,18 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
         }
         return null;
     }
+
+    @Override
+    protected void onPostExecute(String output) {
+//        Toast.makeText(mContext, output, Toast.LENGTH_LONG).show();
+        Log.d("TEST__","CalendarMakeRequestTask : onPostExecute : " + mID);
+        if (mID == 3) Toast.makeText(mContext, TextUtils.join("\n\n", eventStrings),Toast.LENGTH_LONG).show();
+        if(delegate != null && mID == 4){
+            Log.d("TEST__","CalendarMakeRequestTask : onTaskDone");
+            delegate.onTaskDone();
+        }
+    }
+
     /*
      * CalendarTitle 이름의 캘린더에서 10개의 이벤트를 가져와 리턴
      */
@@ -128,31 +173,99 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
             }
             pageToken = calendarList.getNextPageToken();
         } while (pageToken != null);
+        new SettingHelper(mContext, mContext.getString(R.string.settingkey)).setMyCalendarID(id);
         return id;
     }
 
+    public List<Pair<String, String>> getAllCalendarInfo() {
+        Log.d("TEST__","getAllCalendarInfo : 1");
+        List<Pair<String, String>> ids = new ArrayList<>();
+        // Iterate through entries in calendar list
+        String pageToken = null;
+        do {
+            CalendarList calendarList = null;
+            try {
+                Log.d("TEST__","getAllCalendarInfo : 2 : ");
+                calendarList = mService.calendarList().list().setPageToken(pageToken).execute();
+                Log.d("TEST__","getAllCalendarInfo : 3");
+            } catch (UserRecoverableAuthIOException e) {
+                Log.e("TEST__","CalendarmakeRequestTask : getAllCalendarInfo : UserRecoverableAuthIOException : " + e.toString());
+                mActivity.startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
+            } catch (IOException e) {
+                Log.e("TEST__","CalendarmakeRequestTask : getAllCalendarInfo : " + e.toString());
+                e.printStackTrace();
+            }
+            List<CalendarListEntry> items = calendarList.getItems();
+            for (CalendarListEntry calendarListEntry : items) {
+                ids.add(Pair.create(calendarListEntry.getId(),calendarListEntry.getSummary()));
+            }
+            pageToken = calendarList.getNextPageToken();
+            Log.d("TEST__","pageToken is " + pageToken);
+        } while (pageToken != null);
+        return ids;
+    }
+
     public String getEvent() throws IOException {
-        DateTime now = new DateTime(System.currentTimeMillis());
-        String calendarID = getCalendarID(mContext.getString(R.string.app_name));
-        if (calendarID == null) {
-            return "캘린더를 먼저 생성하세요.";
+        Log.d("TEST__","here1 : " + mContext.getString(R.string.app_name));
+        String calendarID = new SettingHelper(mContext,settingkey).getMyCalendarID();
+        if(calendarID.isEmpty())
+            calendarID = getCalendarID(mContext.getString(R.string.app_name));
+        Log.d("TEST__","here2 : " + calendarID);
+
+        List<Pair<String,String>> idTitleList = getAllCalendarInfo();
+        Log.d("TEST__","here3");
+        List<CalendarSyncData> calendarSyncDataList = new ArrayList<>();
+        if(idTitleList.size() != 0){
+            for(Pair<String,String> idTitle : idTitleList){
+                Log.d("TEST__","getEvent()"+ "\nidTitle.first is " + idTitle.first + "\ncalendarID is " + calendarID);
+                if(!idTitle.first.equals(calendarID)){
+                    List<CalendarSyncData> syncDataList  = getEvent(idTitle.first);
+                    if(syncDataList != null)
+                        calendarSyncDataList.addAll(syncDataList);
+                }
+            }
         }
+        new SettingHelper(mContext,mContext.getString(R.string.settingkey)).setCalendarSyncDataList(calendarSyncDataList);
+        return eventStrings.size() + "개의 데이터를 가져왔습니다.";
+    }
+
+    public List<CalendarSyncData> getEvent(String calendarID) throws IOException {
         Events events = mService.events().list(calendarID)//"primary")
-                //.setMaxResults(10)
-                //.setTimeMin(now)
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();
         List<Event> items = events.getItems();
+        ArrayList<String> colorList = new ArrayList<>(Arrays.asList(mContext.getResources().getStringArray(R.array.colorIndex)));
+        CalendarSyncData calendarSyncData = new CalendarSyncData();
+        List<CalendarSyncData> calendarSyncDataList = new ArrayList<>();
         for (Event event : items) {
-            DateTime start = event.getStart().getDateTime();
-            if (start == null) {
-                // 모든 이벤트가 시작 시간을 갖고 있지는 않다. 그런 경우 시작 날짜만 사용
-                start = event.getStart().getDate();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            // 모든 이벤트가 시작 시간을 갖고 있지는 않다. 그런 경우 시작 날짜만 사용
+
+            try {
+                DateTime start = event.getStart().getDate();
+                DateTime end = event.getEnd().getDate();
+                if(start == null || end == null)
+                    continue;
+                String start_string = start.toString();
+                String end_string = end.toString();
+                Log.d("TEST__",start_string);
+                Date startDate = dateFormat.parse(start_string);
+                Date endDate = dateFormat.parse(end_string);
+                String colorWithSharp = colorList.get(Integer.parseInt((event.getColorId()!=null) ? event.getColorId():"1")-1);
+                String title = event.getSummary();
+                calendarSyncData.setStartDate(startDate);
+                calendarSyncData.setEndDate(endDate);
+                calendarSyncData.setTitle(title);
+                calendarSyncData.setColor(Color.parseColor(colorWithSharp));
+                calendarSyncDataList.add(calendarSyncData);
+                Log.d("TEST__","title is " + title);
+            } catch (ParseException e) {
+                Log.d("TEST__", e.toString());
+                e.printStackTrace();
             }
-            eventStrings.add(String.format("%s \n (%s)", event.getSummary(), start));
         }
-        return eventStrings.size() + "개의 데이터를 가져왔습니다.";
+        return calendarSyncDataList;
     }
 
     /*
@@ -190,16 +303,10 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String output) {
-//        Toast.makeText(mContext, output, Toast.LENGTH_LONG).show();
-        if (mID == 3) Toast.makeText(mContext, TextUtils.join("\n\n", eventStrings),Toast.LENGTH_LONG).show();
-    }
-
-    @Override
     protected void onCancelled() {
         if (mLastError != null) {
             if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
-                googlePlayService.showGooglePlayServicesAvailabilityErrorDialog(
+                showGooglePlayServicesAvailabilityErrorDialog(
                         ((GooglePlayServicesAvailabilityIOException) mLastError)
                                 .getConnectionStatusCode());
             } else if (mLastError instanceof UserRecoverableAuthIOException) {
@@ -211,6 +318,20 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
         } else {
             Toast.makeText(mContext,"요청 취소됨.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    /*
+    * 안드로이드 디바이스에 Google Play Services가 설치 안되어 있거나 오래된 버전인 경우 보여주는 대
+    화상자
+    */
+    void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode){
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        Dialog dialog = apiAvailability.getErrorDialog(
+                mActivity,
+                connectionStatusCode,
+                REQUEST_GOOGLE_PLAY_SERVICES
+        );
+        dialog.show();
     }
 
     public void updateEvent(DayContent dayContent) throws IOException{
@@ -246,9 +367,11 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
                 eventToUpdate.setStart(startEventDateTime);
                 eventToUpdate.setEnd(endEventDateTime);
                 eventToUpdate.setSummary(dayContent.getContentString());
-                String color = "#" + String.format("%06X", (0xFFFFFF & dayContent.getContentColor()));
-                int index = colorList.indexOf(color.toLowerCase());
-                eventToUpdate.setColorId(Integer.toString(index+1));
+//                String color = "#" + String.format("%06X", (0xFFFFFF & dayContent.getContentColor()));
+//                int index = colorList.indexOf(color.toLowerCase());
+//                eventToUpdate.setColorId(Integer.toString(index+1));
+                int index = dayContent.getContentColorId();
+                eventToUpdate.setColorId(Integer.toString(index));
 
                 eventToUpdate = mService.events().update(calendarID, eventId, eventToUpdate).execute();
                 Log.d("TEST__","updated : " + eventToUpdate.getHtmlLink());
@@ -336,9 +459,12 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
         event.setStart(startEventDateTime);
         event.setEnd(endEventDateTime);
         event.setSummary(dayContent.getContentString());
-        String color = "#" + String.format("%06X", (0xFFFFFF & dayContent.getContentColor()));
-        int index = colorList.indexOf(color.toLowerCase());
-        event.setColorId(Integer.toString(index+1));
+//        String color = "#" + String.format("%06X", (0xFFFFFF & dayContent.getContentColor()));
+//        int index = colorList.indexOf(color.toLowerCase());
+//        event.setColorId(Integer.toString(index+1));
+
+        int index = dayContent.getContentColorId();
+        event.setColorId(Integer.toString(index));
 
         try {
             event = mService.events().insert(calendarID, event).execute();
@@ -377,6 +503,7 @@ public class CalendarMakeRequestTask extends AsyncTask<Void, Void, String> {
         Log.d("TEST__","updateEvent() : DayContentList size is : " + dayContentList.size());
         Log.d("TEST__","updateEvent() : beforeSynDayContentList size is : " + dayContentList.size());
         String calendarID = getCalendarID(mContext.getString(R.string.app_name));
+        Log.d("TEST__","updateEvent() : " + calendarID);
         if (calendarID == null) {
             //Toast.makeText(mContext, "캘린더를 먼저 생성합니다.", Toast.LENGTH_LONG).show();
             Log.e("TEST__","updateEvent() : 캘린더를 먼저 생성합니다.");

@@ -29,6 +29,8 @@ public class GooglePlayService{
     private static final String[] SCOPES = {CalendarScopes.CALENDAR};
     private int saved_ID;
 
+    public static int GET_EVENT = 4;
+
     private Activity mActivity;
     private Context mContext;
     private GoogleAccountCredential mCredential;
@@ -86,6 +88,7 @@ public class GooglePlayService{
     }
 
 
+
     public boolean isExistCalendarAccount(){
         return mCredential.getSelectedAccountName() != null;
     }
@@ -117,7 +120,7 @@ public class GooglePlayService{
                 String accountName = mActivity.getPreferences(Context.MODE_PRIVATE)
                         .getString(PREF_ACCOUNT_NAME, null);
                 if (accountName != null) {
-                    Log.d("TEST__","chooseAccount : accountName is not null");
+                    Log.d("TEST__","chooseAccount : accountName is not null : " + accountName);
                     // 선택된 구글 계정 이름으로 설정한다.
                     mCredential.setSelectedAccountName(accountName);
                     getResultsFromApi(ID);

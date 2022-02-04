@@ -26,6 +26,7 @@ public class DayContent {
     private String contentString;
     private Date contentDate;
     private CalendarSyncData syncData;
+    private int contentColorId = 0;
 
     public DayContent(){
 
@@ -35,6 +36,13 @@ public class DayContent {
         this.contentColor = contentColor;
         this.contentString = contentString;
         this.contentDate = contentDate;
+    }
+
+    public DayContent(int contentColor, String contentString, Date contentDate, int contentColorId) {
+        this.contentColor = contentColor;
+        this.contentString = contentString;
+        this.contentDate = contentDate;
+        this.contentColorId = contentColorId;
     }
 
     public CalendarSyncData getSyncData() {
@@ -53,6 +61,10 @@ public class DayContent {
         this.contentColor = contentColor;
     }
 
+    public void setContentColorId(int contentColorId){
+        this.contentColorId = contentColorId;
+    }
+
     public String getContentString() {
         return contentString;
     }
@@ -65,9 +77,14 @@ public class DayContent {
         return contentDate;
     }
 
+    public int getContentColorId(){
+        return this.contentColorId;
+    }
+
     public void setContentDate(Date contentDate) {
         this.contentDate = contentDate;
     }
+
 
     @Override
     public boolean equals(@Nullable Object obj) {
@@ -111,11 +128,35 @@ public class DayContent {
         editor.commit();
     }
 
-    public void updateSelectedDaysPrefByColor(Context context, String key, String written, int color){
+    public void updateSelectedDaysPrefByColor(Context context, String key, List<Pair<Integer, String>> integerStringList){
+        List<DayContent> data = getSelectedDaysPref(context, key);
+        List<DayContent> after = new ArrayList<>();
+        for(int i=0;i<integerStringList.size();i++){
+            int afterColor = integerStringList.get(i).first;
+            String written = integerStringList.get(i).second;
+            for(DayContent d : data){
+                if(d.getContentColorId() == i){
+                    d.setContentColor(afterColor);
+                    d.setContentString(written);
+                    after.add(d);
+                }
+                //여기에 after.add(d)가 있으면 5배씩(beforeintegerStringList.size()) daycontent가 증가하게 된다...
+                //after.add(d);
+            }
+        }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        Gson gson = new GsonBuilder().create();
+        String save = gson.toJson(after, new TypeToken<List<DayContent>>(){}.getType());
+        editor.putString(key, save);
+        editor.commit();
+    }
+
+    public void updateSelectedDaysPrefByColor(Context context, String key, String written, int color, int id){
         List<DayContent> data = getSelectedDaysPref(context, key);
         List<DayContent> after = new ArrayList<>();
         for(DayContent d : data){
-            if(d.getContentColor() == color)
+            if(d.getContentColorId() == id)
                 d.setContentString(written);
             after.add(d);
         }
@@ -127,33 +168,8 @@ public class DayContent {
         editor.commit();
     }
 
-    public void setColorStringPref(Context context, String key, List<Pair<Integer, String>> integerStringList){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        Gson gson = new GsonBuilder().create();
-        String save = gson.toJson(integerStringList, new TypeToken<List<Pair<Integer, String>>>(){}.getType());
-        editor.putString(key, save);
-        editor.commit();
-    }
 
-    public List<Pair<Integer, String>> getColorStringPref(Context context, String key){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String saved = preferences.getString(key, null);
-        Gson gson = new GsonBuilder().create();
-        List<Pair<Integer, String>> integerStringList = new ArrayList<>();
-        integerStringList.add(Pair.create(context.getColor(R.color.googleCalendarColor4),""));
-        integerStringList.add(Pair.create(context.getColor(R.color.googleCalendarColor6),""));
-        integerStringList.add(Pair.create(context.getColor(R.color.googleCalendarColor7),""));
-        integerStringList.add(Pair.create(context.getColor(R.color.googleCalendarColor11),""));
-        integerStringList.add(Pair.create(context.getColor(R.color.googleCalendarColor9),""));
-
-        if(saved != null){
-            integerStringList = gson.fromJson(saved, new TypeToken<List<Pair<Integer, String>>>(){}.getType());
-        }
-        return integerStringList;
-    }
-
-    public void setSelectedDaysPref(Context context, String key, List<Day> selectedDays, String written, int color){
+    public void setSelectedDaysPref(Context context, String key, List<Day> selectedDays, String written, int color, int id){
         //기존 DayContent
         List<DayContent> data = getSelectedDaysPref(context, key);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -163,7 +179,7 @@ public class DayContent {
             Log.e("Shift","prev exist!");
             //이번에 선택된 녀석들은 전부 추가
             for(Day selectedDay : selectedDays){
-                _selectedDays.add(new DayContent(color, written, selectedDay.getCalendar().getTime()));
+                _selectedDays.add(new DayContent(color, written, selectedDay.getCalendar().getTime(), id));
             }
             //기존의 데이터와 겹치지 않는 녀석만 추가
             for(DayContent d : data){
@@ -198,7 +214,6 @@ public class DayContent {
         editor.commit();
     }
 
-
     public void deleteSelectedDaysPref(Context context, String key, List<Day> selectedDays, String written, int color){
         //기존 DayContent
         List<DayContent> data = getSelectedDaysPref(context, key);
@@ -231,7 +246,6 @@ public class DayContent {
         editor.putString(key, save);
         editor.commit();
     }
-
 
     public List<DayContent> getSelectedDaysPref(Context context, String key){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

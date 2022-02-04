@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     private String key = "";
     private String settingkey = "";
     private SettingHelper settingHelper;
-    private final int PERMISSION_NUM = 1010;
 
     private com.google.api.services.calendar.Calendar mService = null;
 
@@ -88,17 +87,6 @@ public class MainActivity extends AppCompatActivity {
         settingHelper = new SettingHelper(this, settingkey);
         googlePlayService = new GooglePlayService((Activity) this);
 
-        int permission1 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR);
-        int permission2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR);
-
-        if(permission1 == PackageManager.PERMISSION_DENIED ||
-                permission2 == PackageManager.PERMISSION_DENIED){
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                requestPermissions(new String[]{Manifest.permission.READ_CALENDAR,
-                        Manifest.permission.WRITE_CALENDAR},PERMISSION_NUM);
-            }
-            return;
-        }
         initViews();
     }
 
@@ -108,27 +96,6 @@ public class MainActivity extends AppCompatActivity {
         overridePendingTransition(0,0);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if(requestCode == PERMISSION_NUM){
-            boolean check_result = true;
-
-            for(int result : grantResults){
-                if(result != PackageManager.PERMISSION_GRANTED){
-                    check_result = false;
-                    break;
-                }
-            }
-            //권한체크에 동의를 하지 않으면 안드로이드 종료
-            if(check_result == true){
-                initViews();
-            }
-            else{
-                finish();
-            }
-        }
-    }
 
     private void initViews(){
         ImageButton doubleButton = findViewById(R.id.double_button);
@@ -146,19 +113,6 @@ public class MainActivity extends AppCompatActivity {
 //        calendarView.setSelectionType(SelectionType.NONE);
         calendarView.setSelectionType(SelectionType.JUST_SHOW_INFO);
         calendarView.setCalendarOrientation(OrientationHelper.HORIZONTAL);
-        //Set days you want to connect
-        Calendar calendar = Calendar.getInstance();
-        Set<Long> days = new TreeSet<>();
-        days.add(calendar.getTimeInMillis());
-        calendar.set(2022,Calendar.JANUARY,31);
-        days.add(calendar.getTimeInMillis());
-
-        int textColor = Color.parseColor("#ff0000");
-        int selectedTextColor = Color.parseColor("#ff4000");
-        int disabledTextColor = Color.parseColor("#ff8000");
-        ConnectedDays connectedDays = new ConnectedDays(days, textColor, selectedTextColor, disabledTextColor);
-
-        calendarView.addConnectedDays(connectedDays);
 
         if(settingHelper.isImport()){
             calendarView.turnOnSyncCalendar();
@@ -174,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
                         calendarView, googlePlayService, settingHelper, new OnSettingListener() {
                     @Override
                     public void OnSettingListener(List<Pair<Integer, String>> beforeintegerStringList, List<Pair<Integer, String>> integerStringList) {
-                        dayContent_saving.updateSelectedDaysPrefByColor(view.getContext(), key, beforeintegerStringList, integerStringList);
+                        dayContent_saving.updateSelectedDaysPrefByColor(view.getContext(), key, integerStringList);
+//                        dayContent_saving.updateSelectedDaysPrefByColor(view.getContext(), key, beforeintegerStringList, integerStringList);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(view.getContext(),key));
                         settingHelper = new SettingHelper(view.getContext(), settingkey);
                         Log.d("TEST__","" + "settingHelper.isExport() : " + settingHelper.isExport());
@@ -192,13 +147,14 @@ public class MainActivity extends AppCompatActivity {
                 calendarView.setSelectionType(SelectionType.MULTIPLE);
                 CalendarDialog calendarDialog= new CalendarDialog(view.getContext(), new OnDaysSelectionListener() {
                     @Override
-                    public void onDaysSelected(List<Day> selectedDays, String written, int color) {
+                    public void onDaysSelected(List<Day> selectedDays, String written, int color, int id) {
                         if(!selectedDays.isEmpty()){
                             for(Day selectedDay : selectedDays){
-                                selectedDay.setDayContent(new DayContent(color, written, selectedDay.getCalendar().getTime()));
+                                selectedDay.setDayContent(new DayContent(color, written, selectedDay.getCalendar().getTime(), id));
                             }
                         }
-                        dayContent_saving.setSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);
+//                        dayContent_saving.setSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);
+                        dayContent_saving.setSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color,id);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
                         if(settingHelper.isExport())
                             googlePlayService.getResultsFromApi(2);
@@ -222,10 +178,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 CalendarDialog calendarDialog = new CalendarDialog(view.getContext(), new OnDaysSelectionListener() {
                     @Override
-                    public void onDaysSelected(List<Day> selectedDays, String written, int color) {
+                    public void onDaysSelected(List<Day> selectedDays, String written, int color, int id) {
                         if(!selectedDays.isEmpty()){
                             for(Day selectedDay : selectedDays){
-                                selectedDay.setDayContent(new DayContent(color, written, selectedDay.getCalendar().getTime()));
+                                selectedDay.setDayContent(new DayContent(color, written, selectedDay.getCalendar().getTime(),id));
                             }
                         }
                         dayContent_saving.deleteSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);

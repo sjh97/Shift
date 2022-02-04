@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.example.shift.R;
+import com.example.shift.Utils.SettingHelper;
 import com.example.shift.cosmocalendar.model.Day;
 import com.example.shift.cosmocalendar.model.Month;
 import com.example.shift.cosmocalendar.settings.appearance.AppearanceInterface;
@@ -36,6 +37,7 @@ import com.example.shift.cosmocalendar.utils.DayContent;
 import com.example.shift.cosmocalendar.utils.SelectionType;
 import com.example.shift.cosmocalendar.view.CalendarView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,9 +53,10 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
     private EditText editText;
     private CalendarView calendarView;
     private LinearLayout colorBunch;
-    private List<Pair<Integer, String>> integerStringList;
+    private List<Pair<Integer, String>> integerStringList = new ArrayList<>();
     String colorkey = "";
     String key = "";
+    String settingkey = "";
 
     private OnDaysSelectionListener onDaysSelectionListener;
 
@@ -78,6 +81,7 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
         Log.e("Shift", "onCreate");
         colorkey = getContext().getString(R.string.colorkey);
         key = getContext().getString(R.string.key);
+        settingkey = getContext().getString(R.string.settingkey);
         initViews();
     }
 
@@ -88,7 +92,8 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
         editText = findViewById(R.id.edit_button);
         calendarView = (CalendarView) findViewById(R.id.calendar_view);
         colorBunch = findViewById(R.id.colorBunch);
-        integerStringList = new DayContent().getColorStringPref(editText.getContext(), colorkey);
+//        integerStringList = new DayContent().getColorStringPref(editText.getContext(), colorkey);
+        integerStringList = new SettingHelper(getContext(), settingkey).getColorStringList();
         editText.setText(integerStringList.get(0).second);
         tvHelpMention = findViewById(R.id.tv_help_metion);
 
@@ -161,23 +166,28 @@ public class CalendarDialog extends Dialog implements View.OnClickListener,
         List<Day> selectedDays = calendarView.getSelectedDays();
         String written = editText.getText().toString();
         int color = ((ColorDrawable) ((LinearLayout) findViewById(R.id.color1_btn)).getBackground()).getColor();;
+        int id = 0;
         for(int i=0;i<colorBunch.getChildCount();i++){
             //colorview is colorll (R.id.color1_btn)
             LinearLayout colorView = (LinearLayout) colorBunch.getChildAt(i);
             if(colorView.getChildAt(0).getVisibility() == View.VISIBLE){
                 color = ((ColorDrawable) colorView.getBackground()).getColor();
+                id = i;
                 //이 구문을 onDaysSelected 앞에 둬야 색깔 정보가 업데이트 되고 이후 onDaysSelected가 실행된다.
                 DayContent dayContent = new DayContent();
-                List<Pair<Integer, String>> integerStringList = dayContent.getColorStringPref(this.getContext(), colorkey);
+//                List<Pair<Integer, String>> integerStringList = dayContent.getColorStringPref(this.getContext(), colorkey);
+                List<Pair<Integer, String>> integerStringList = new SettingHelper(getContext(), settingkey).getColorStringList();
                 integerStringList.set(i,Pair.create(color,editText.getText().toString()));
-                dayContent.setColorStringPref(this.getContext(),colorkey, integerStringList);
-                dayContent.updateSelectedDaysPrefByColor(this.getContext(),key,editText.getText().toString(),color);
+//                dayContent.setColorStringPref(this.getContext(),colorkey, integerStringList);
+                new SettingHelper(getContext(), settingkey).setColorStringList(integerStringList);
+//                dayContent.updateSelectedDaysPrefByColor(this.getContext(),key,editText.getText().toString(),color);
+                dayContent.updateSelectedDaysPrefByColor(this.getContext(),key,editText.getText().toString(),color,id);
                 break;
             }
         }
 
         if (onDaysSelectionListener != null) {
-            onDaysSelectionListener.onDaysSelected(selectedDays, written, color);
+            onDaysSelectionListener.onDaysSelected(selectedDays, written, color, id);
         }
 
         dismiss();

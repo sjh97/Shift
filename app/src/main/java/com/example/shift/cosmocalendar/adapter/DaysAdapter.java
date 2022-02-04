@@ -13,7 +13,6 @@ import com.example.shift.cosmocalendar.model.Day;
 import com.example.shift.cosmocalendar.model.Month;
 import com.example.shift.cosmocalendar.utils.Constants;
 import com.example.shift.cosmocalendar.utils.DayContent;
-import com.example.shift.cosmocalendar.utils.MonthDiffCallback;
 import com.example.shift.cosmocalendar.view.CalendarView;
 import com.example.shift.cosmocalendar.view.ItemViewType;
 import com.example.shift.cosmocalendar.view.delegate.DayDelegate;

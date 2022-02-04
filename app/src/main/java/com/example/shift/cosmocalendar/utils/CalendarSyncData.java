@@ -19,6 +19,10 @@ public class CalendarSyncData {
         this.color = color;
     }
 
+    public CalendarSyncData(){
+
+    }
+
     public int getId() {
         return id;
     }

@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
-import android.icu.lang.UCharacter;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -22,21 +21,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.viewpager2.widget.ViewPager2;
-
 import com.example.shift.R;
+import com.example.shift.Utils.SettingHelper;
 import com.example.shift.cosmocalendar.FetchMonthsAsyncTask;
 import com.example.shift.cosmocalendar.adapter.MonthAdapter;
 import com.example.shift.cosmocalendar.listeners.OnMonthChangeListener;
@@ -53,6 +48,7 @@ import com.example.shift.cosmocalendar.selection.selectionbar.MultipleSelectionB
 import com.example.shift.cosmocalendar.selection.selectionbar.SelectionBarItem;
 import com.example.shift.cosmocalendar.settings.SettingsManager;
 import com.example.shift.cosmocalendar.settings.appearance.AppearanceInterface;
+import com.example.shift.cosmocalendar.settings.appearance.AppearanceModel;
 import com.example.shift.cosmocalendar.settings.date.DateInterface;
 import com.example.shift.cosmocalendar.settings.lists.CalendarListsInterface;
 import com.example.shift.cosmocalendar.settings.lists.DisabledDaysCriteria;
@@ -64,12 +60,9 @@ import com.example.shift.cosmocalendar.utils.CalendarUtils;
 import com.example.shift.cosmocalendar.utils.DayContent;
 import com.example.shift.cosmocalendar.utils.SelectionType;
 import com.example.shift.cosmocalendar.utils.WeekDay;
-import com.example.shift.cosmocalendar.utils.snap.GravityPagerSnapHelper;
-import com.example.shift.cosmocalendar.utils.snap.GravitySnapHelper;
 import com.example.shift.cosmocalendar.view.customviews.CircleAnimationTextView;
 import com.example.shift.cosmocalendar.view.customviews.SquareTextView;
 import com.example.shift.cosmocalendar.view.delegate.MonthDelegate;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -82,7 +75,7 @@ import java.util.TreeSet;
 
 public class CalendarView extends RelativeLayout implements OnDaySelectedListener,
         AppearanceInterface, DateInterface, CalendarListsInterface, SelectionInterface,
-        MultipleSelectionBarAdapter.ListItemClickListener {
+        MultipleSelectionBarAdapter.ListItemClickListener{
 
 
     private List<Day> selectedDays;
@@ -105,11 +98,11 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
     private FrameLayout flNavigationButtons;
     public ImageView ivPrevious;
     public ImageView ivNext;
+    public TextView monthNameNavi;
 
     //Helpers
     private SettingsManager settingsManager;
     private BaseSelectionManager selectionManager;
-    private GravitySnapHelper snapHelper;
 
     //Listeners
     private OnMonthChangeListener onMonthChangeListener;
@@ -117,7 +110,6 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
 
     //Contents
     private List<CalendarSyncData> syncDataList = new ArrayList<>();
-    private int calendar_ID = -100;
 
     public int lastVisibleMonthPosition = SettingsManager.DEFAULT_MONTH_COUNT / 2;
 
@@ -258,15 +250,15 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
     }
 
     public void init() {
-        setDaysOfWeekTitles();
-
-        setSelectionManager();
-        createRecyclerView();
-        createBottomSelectionBar();
 
         if (settingsManager.getCalendarOrientation() == LinearLayoutManager.HORIZONTAL) {
             createNavigationButtons();
         }
+
+        setDaysOfWeekTitles();
+        setSelectionManager();
+        createRecyclerView();
+        createBottomSelectionBar();
     }
 
     /**
@@ -294,11 +286,14 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
     private void createDaysOfWeekTitle() {
         boolean isTitleAlreadyAdded = llDaysOfWeekTitles != null;
         if (!isTitleAlreadyAdded) {
+            Log.d("TEST__","createDaysOfWeekTitle : weekTitles is null");
             llDaysOfWeekTitles = new LinearLayout(getContext());
             llDaysOfWeekTitles.setId(View.generateViewId());
             llDaysOfWeekTitles.setOrientation(LinearLayout.HORIZONTAL);
-            llDaysOfWeekTitles.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            llDaysOfWeekTitles.setLayoutParams(layoutParams);
         } else {
+            Log.d("TEST__","createDaysOfWeekTitle : weekTitles is not null");
             llDaysOfWeekTitles.removeAllViews();
         }
 
@@ -308,6 +303,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         for (String title : CalendarUtils.createWeekDayTitles(settingsManager.getFirstDayOfWeek())) {
             SquareTextView tvDayTitle = new SquareTextView(getContext());
             tvDayTitle.setText(title);
+            Log.d("TEST__","createDaysOfWeekTitle : " + title);
             tvDayTitle.setLayoutParams(textViewParam);
             tvDayTitle.setGravity(Gravity.CENTER);
             llDaysOfWeekTitles.addView(tvDayTitle);
@@ -317,6 +313,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         llDaysOfWeekTitles.setBackgroundResource(R.drawable.border_top_bottom);
 
         if (!isTitleAlreadyAdded) {
+            Log.d("TEST__","createDaysOfWeekTitle : weekTitles is null2");
             addView(llDaysOfWeekTitles);
         }
     }
@@ -428,7 +425,10 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
                 super.onPageSelected(position);
                 int totalItemCount = SettingsManager.DEFAULT_MONTH_COUNT;
                 lastVisibleMonthPosition = position;
-
+                if(flNavigationButtons != null){
+                    monthNameNavi.setText(getMonths().get(position).getMonthName());
+                    monthNameNavi.setBackgroundColor(new AppearanceModel().getMonthTextColor());
+                }
                 if (position < 2) {
                     loadAsyncMonths(false);
                 } else if (position >= totalItemCount - 2) {
@@ -456,6 +456,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.BELOW, llDaysOfWeekTitles.getId());
         rvMonths.setLayoutParams(params);
+        rvMonths.setBackgroundColor(getContext().getColor(R.color.default_calendar_head_background_color));
 
         monthAdapter = createAdapter();
 
@@ -522,7 +523,10 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
     private void createNavigationButtons() {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         flNavigationButtons = (FrameLayout) inflater.inflate(R.layout.calendar_navigation_buttons, this, false);
-
+        flNavigationButtons.setId(View.generateViewId());
+        monthNameNavi = flNavigationButtons.findViewById(R.id.tv_month_name_navi);
+        monthNameNavi.setText(getMonths().get(lastVisibleMonthPosition).getMonthName());
+        monthNameNavi.setBackgroundColor(new AppearanceModel().getMonthTextColor());
         setPreviousNavigationButton();
         setNextNavigationButton();
 
@@ -633,6 +637,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
 
     @Override
     public void setDaySyncData(List<CalendarSyncData> syncDataList) {
+        Log.d("TEST__","CalendarView : setDaySyncData : " + syncDataList.size());
         settingsManager.setDaySyncData(syncDataList);
         monthAdapter.setDaySyncData(syncDataList);
         update();
@@ -640,8 +645,15 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
 
     //set whether default calendar is synced or not.
     public void turnOnSyncCalendar() {
-        calendarSync();
-        setDaySyncData(this.syncDataList);
+        try{
+            calendarSync();
+            setDaySyncData(this.syncDataList);
+        }catch (Exception e){
+            Log.e("TEST__", e.toString());
+            new SettingHelper(getContext(), getContext().getString(R.string.settingkey)).setImport(false);
+        }
+
+
     }
 
     public void turnOffSyncCalendar() {
@@ -651,6 +663,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
 
     //synchronize default calendar.
     private void calendarSync() {
+        String myCalendarID =  this.getContext().getString(R.string.app_name);
         //https://zeph1e.tistory.com/42?category=338725
         //https://www.youtube.com/watch?v=GihhIgDYCNo
         this.syncDataList = new ArrayList<>();
@@ -664,7 +677,7 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
                 CalendarContract.Events.DURATION,
                 CalendarContract.Events.RDATE,
                 CalendarContract.Events.RRULE,
-                CalendarContract.Events.CALENDAR_ID
+                CalendarContract.Events.CALENDAR_DISPLAY_NAME
         };
 
         Cursor cur = null;
@@ -683,6 +696,8 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
             int color;
             int duration = 0;
             String rrule = null;
+            String rrate = null;
+            String currentcalendarDisplayName = null;
 
             // Get the field values
             id = cur.getInt(0);
@@ -693,16 +708,16 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
             color = cur.getInt(5);
             //duration : 반복된 이벤트에서 그 이벤트가 며칠간인지
             String prev_duration = cur.getString(6);
+            rrate = cur.getString(7);
             //rrule은 duration > 0이 아니면 null 임
             rrule = cur.getString(8);
+            currentcalendarDisplayName = cur.getString(9);
 
-            this.calendar_ID = cur.getInt(9);
+            if(currentcalendarDisplayName != null && myCalendarID != "")
+                if(currentcalendarDisplayName.equals(myCalendarID))
+                    continue;
 
             duration = (prev_duration != null) ? Integer.parseInt(prev_duration.split("\\D+")[1]) : 0;
-            Log.d("Shift__", "Calendar ID : " + this.calendar_ID);
-            Log.d("Shift__", " _ID : " + id);
-//            Log.d("Shift__", new SimpleDateFormat("yyyy-MM-dd").format(dtstart)
-//                    + " Duration : " + prev_duration + " : " + duration);
             if (duration > 0) {
                 Calendar calendar = Calendar.getInstance();
                 int current_year = calendar.get(Calendar.YEAR);
@@ -711,8 +726,16 @@ public class CalendarView extends RelativeLayout implements OnDaySelectedListene
                 dtstart = calendar.getTime();
                 String[] rules = rrule.split(";|=");
                 Log.d("Shift__", "After setting : " + new SimpleDateFormat("yyyy-MM-dd").format(dtstart));
-                Log.d("Shift__", "rrule : " + rrule);
             }
+            if(title != null)
+                Log.d("CalendarTest","Title is " + title);
+            Log.d("CalendarTest","dtstart is " + dtstart);
+            if(prev_duration != null)
+                Log.e("CalendarTest","duration : " + prev_duration + "");
+            if(rrule != null)
+                Log.e("CalendarTest", "rrule : " + rrule);
+            if(rrate != null)
+                Log.e("CalendarTest", "rrate : " + rrate);
 
 
             CalendarSyncData syncData = new CalendarSyncData(id, title, dtstart, dtend, allDay, color);

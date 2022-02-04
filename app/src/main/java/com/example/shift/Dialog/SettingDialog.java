@@ -1,6 +1,7 @@
 package com.example.shift.Dialog;
 
 
+import android.Manifest;
 import android.accounts.Account;
 import android.app.Activity;
 import android.app.Dialog;
@@ -10,11 +11,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
@@ -38,6 +41,8 @@ import com.example.shift.Utils.ExportData;
 import com.example.shift.Utils.SettingHelper;
 import com.example.shift.cosmocalendar.utils.DayContent;
 import com.example.shift.cosmocalendar.view.CalendarView;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
@@ -57,8 +62,8 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
     private CalendarView calendarView;
     private Activity activity;
 
-    private List<Pair<Integer, String>> integerStringList;
-    private List<Pair<Integer, String>> beforeintegerStringList;
+    private List<Pair<Integer, String>> integerStringList = new ArrayList<>();
+    private List<Pair<Integer, String>> beforeintegerStringList = new ArrayList<>();
     SettingHelper settingHelper;
     String colorkey = "";
     String key = "";
@@ -96,9 +101,11 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
     }
 
     private void initViews() {
-        beforeintegerStringList = new DayContent().getColorStringPref(getContext(), colorkey);
-        integerStringList = new DayContent().getColorStringPref(getContext(), colorkey);
         SettingHelper settingHelper = new SettingHelper(getContext(), setting_key);
+//        beforeintegerStringList = new DayContent().getColorStringPref(getContext(), colorkey);
+        beforeintegerStringList = settingHelper.getColorStringList();
+        Log.d("TEST__","settingDialog : iniViews : beforeintergerStringList is null ? " + (beforeintegerStringList == null));
+        integerStringList.addAll(beforeintegerStringList);
 
         ivDone = findViewById(R.id.setting_done_button);
         editText = findViewById(R.id.setting_edit_button);
@@ -122,8 +129,26 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if(isChecked){
-                    settingHelper.setImport(true);
-                    restartCode = true;
+
+                    PermissionListener permissionListener = new PermissionListener() {
+                        @Override
+                        public void onPermissionGranted() {
+                            settingHelper.setImport(true);
+                            restartCode = true;
+                        }
+                        @Override
+                        public void onPermissionDenied(List<String> deniedPermissions) {
+                            settingHelper.setImport(false);
+                            restartCode = false;
+                            importSwitch.setChecked(false);
+                        }
+                    };
+                    TedPermission.with(getContext())
+                            .setPermissionListener(permissionListener)
+                            .setDeniedMessage("가져오기 기능을 사용하실 수 없어요...ㅠㅜ\n\n" +
+                                    "[설정]>[권한]에서 권한을 허용할 수 있어요.")
+                            .setPermissions(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)
+                            .check();
                 }
                 else{
                     settingHelper.setImport(false);
@@ -224,7 +249,8 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
             }
         }
 
-        new DayContent().setColorStringPref(getContext(), colorkey, integerStringList);
+//        new DayContent().setColorStringPref(getContext(), colorkey, integerStringList);
+        settingHelper.setColorStringList(integerStringList);
 
         if (onSettingListener != null) {
             onSettingListener.OnSettingListener(beforeintegerStringList,integerStringList);

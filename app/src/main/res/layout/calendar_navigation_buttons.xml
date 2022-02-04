@@ -14,6 +14,17 @@
         android:paddingRight="@dimen/space_2x"
         android:src="@drawable/ic_chevron_left_gray" />
 
+    <TextView
+        android:id="@+id/tv_month_name_navi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:letterSpacing="0.1"
+        android:textAllCaps="true"
+        android:textSize="@dimen/text_big"
+        android:text="test"/>
+
     <ImageView
         android:id="@+id/iv_next_month"
         android:layout_width="wrap_content"

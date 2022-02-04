@@ -39,14 +39,14 @@ public class MonthHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Month month) {
-        tvMonthName.setText(month.getMonthName());
-        tvMonthName.setTextColor(appearanceModel.getMonthTextColor());
+//        tvMonthName.setText(month.getMonthName());
+//        tvMonthName.setTextColor(appearanceModel.getMonthTextColor());
 
         viewLeftLine.setVisibility(appearanceModel.getCalendarOrientation() == OrientationHelper.HORIZONTAL ? View.INVISIBLE : View.VISIBLE);
         viewRightLine.setVisibility(appearanceModel.getCalendarOrientation() == OrientationHelper.HORIZONTAL ? View.INVISIBLE : View.VISIBLE);
 //        llMonthHeader.setBackgroundResource(appearanceModel.getCalendarOrientation() == OrientationHelper.HORIZONTAL ? R.drawable.border_top_bottom : 0);
         llMonthHeader.setBackgroundColor(ContextCompat.getColor(llMonthHeader.getContext(), R.color.default_calendar_head_background_color));
-
+        monthView.setBackgroundResource(R.drawable.top_round_border);
         monthView.initAdapter(month);
     }
 

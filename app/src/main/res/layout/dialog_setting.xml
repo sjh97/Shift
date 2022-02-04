@@ -150,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginRight="4dp"
                         android:layout_toLeftOf="@+id/change_color_tv"
                         android:background="@color/googleCalendarColor9">
 
@@ -161,7 +161,30 @@
                             android:background="#00000000"
                             android:src="@drawable/ic_baseline_done_24"
                             android:visibility="invisible" />
+
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/setting_color_ll_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@+id/change_color_tv"
+                        android:background="@color/googleCalendarColor2">
+
+                        <ImageButton
+                            android:id="@+id/setting_color_ib_6"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#00000000"
+                            android:src="@drawable/ic_baseline_done_24"
+                            android:visibility="invisible" />
+
+                    </LinearLayout>
+
+
 
                 </LinearLayout>
 
@@ -271,6 +294,7 @@
             android:layout_height="match_parent">
 
             <Switch
+                android:visibility="gone"
                 android:id="@+id/setting_import_sw"
                 android:text="가져오기"
                 android:checked="true"
