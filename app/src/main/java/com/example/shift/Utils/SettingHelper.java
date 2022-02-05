@@ -79,6 +79,9 @@ public class SettingHelper {
     public List<CalendarSyncData> getCalendarSyncDataList(){
         return settings.calendarSyncDataList;
     }
+    public int getColorCodeSpinnerPosition(){
+        return settings.colorCodeSpinnerPosition;
+    }
 
     public List<Pair<Integer, String>> getColorStringList(){
         return settings.colorStringList;
@@ -168,6 +171,13 @@ public class SettingHelper {
         saveSetting();
     }
 
+    public void setColorCodeSpinnerPosition(int position){
+        initSetting();
+        settings.colorCodeSpinnerPosition = position;
+        saveSetting();
+    }
+
+
     private void saveSetting(){
         String save = gson.toJson(this.settings, new TypeToken<Settings>(){}.getType());
         Log.d("TEST__","SettingHelper : saveSetting : " + save);
@@ -193,9 +203,11 @@ public class SettingHelper {
                 Pair.create(context.getColor(R.color.pantoneraBlue),"E"),
                 Pair.create(context.getColor(R.color.pantoneraGreen),"N"),
                 Pair.create(context.getColor(R.color.pantoneraWheat),"S"),
-                Pair.create(context.getColor(R.color.pantoneraRose),"H"),
-                Pair.create(context.getColor(R.color.pantoneraYellow),"?")
+                Pair.create(context.getColor(R.color.pantoneraRose),"Off"),
+                Pair.create(context.getColor(R.color.pantoneraYellow),"연"),
+                Pair.create(context.getColor(R.color.pantoneraSky),"반")
                 );
+        public int colorCodeSpinnerPosition = 0;
 
          public void printAll(String key){
              Log.d(key, " " + "\nisImoprt : " + isImport + "\nisExoprt : " + isExport

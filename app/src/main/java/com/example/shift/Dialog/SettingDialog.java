@@ -25,10 +25,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -65,6 +69,8 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
     private Switch exportSwitch;
     private CalendarView calendarView;
     private Activity activity;
+    private Spinner spinner;
+    private LinearLayout colorCodePreview;
 
     private List<Pair<Integer, String>> integerStringList = new ArrayList<>();
     private List<Pair<Integer, String>> beforeintegerStringList = new ArrayList<>();
@@ -106,7 +112,6 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
 
     private void initViews() {
         SettingHelper settingHelper = new SettingHelper(getContext(), setting_key);
-//        beforeintegerStringList = new DayContent().getColorStringPref(getContext(), colorkey);
         beforeintegerStringList = settingHelper.getColorStringList();
         Log.d("TEST__","settingDialog : iniViews : beforeintergerStringList is null ? " + (beforeintegerStringList == null));
         integerStringList.addAll(beforeintegerStringList);
@@ -117,11 +122,74 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
         changeColorButton.setBackgroundColor(integerStringList.get(0).first);
         changeColorButton.setOnClickListener(this);
         setting_colorBunch = findViewById(R.id.setting_colorBunch);
+        spinner = findViewById(R.id.setting_colorCode_spinner);
+        colorCodePreview = findViewById(R.id.setting_colorCode_preview);
         for(int i=0;i<setting_colorBunch.getChildCount();i++){
             setting_colorBunch.getChildAt(i).setOnClickListener(this);
-            setting_colorBunch.getChildAt(i).setBackgroundColor(integerStringList.get(i).first);
+            //setting_colorBunch.getChildAt(i).setBackgroundColor(integerStringList.get(i).first);
+            ((TextView) ((FrameLayout) setting_colorBunch.getChildAt(i)).getChildAt(1)).setText(integerStringList.get(i).second);
         }
         editText.setText(integerStringList.get(0).second);
+
+        String[] colorCodeSet = getContext().getResources().getStringArray(R.array.colorCodeSet);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                colorCodeSet);
+        int spinnerPosition = settingHelper.getColorCodeSpinnerPosition();
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setSelection(spinnerPosition);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                String[] colorcode;
+                switch (colorCodeSet[position]){
+                    case "내맘대로" :
+                        ArrayList<String> col = new ArrayList<>();
+                        for(Pair<Integer, String> pair : beforeintegerStringList)
+                            col.add("#" + String.format("%06X", (0xFFFFFF & pair.first)));
+                        colorcode = col.toArray(new String[col.size()]);
+                        break;
+                    case "색상코드1" :
+                        colorcode = getContext().getResources().getStringArray(R.array.colorCode1);
+                        break;
+                    case "색상코드2" :
+                        colorcode = getContext().getResources().getStringArray(R.array.colorCode2);
+                        break;
+
+                    case "색상코드3" :
+                        colorcode = getContext().getResources().getStringArray(R.array.colorCode3);
+                        break;
+
+                    case "색상코드4" :
+                        colorcode = getContext().getResources().getStringArray(R.array.colorCode4);
+                        break;
+
+                    default :
+                        colorcode = getContext().getResources().getStringArray(R.array.colorCode1);
+                        break;
+                }
+                settingHelper.setColorCodeSpinnerPosition(position);
+                for(int j=0;j<colorCodePreview.getChildCount();j++){
+                    colorCodePreview.getChildAt(j).setBackgroundColor(Color.parseColor(colorcode[j]));
+                    String written = integerStringList.get(j).second;
+                    integerStringList.set(j,Pair.create(Color.parseColor(colorcode[j]),written));
+                }
+                //이거를 안 하면 changeColorButton의 정보가 업데이트 되지 않는다.
+                for(int k=0;k<setting_colorBunch.getChildCount();k++){
+                    FrameLayout workView = (FrameLayout) setting_colorBunch.getChildAt(k);
+                    if(workView.getChildAt(0).getVisibility() == View.VISIBLE){
+                        changeColorButton.setBackgroundColor(Color.parseColor(colorcode[k]));
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 
         ivDone.setOnClickListener(this);
 
@@ -196,40 +264,44 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
             Log.d("Shift___","setting_change_color_button");
             for(int i=0;i<setting_colorBunch.getChildCount();i++){
                 //colorview is colorll (R.id.color1_btn)
-                LinearLayout colorView = (LinearLayout) setting_colorBunch.getChildAt(i);
-                if(colorView.getChildAt(0).getVisibility() == View.VISIBLE){
-                    MyColorPickerDialog.Builder builder = makeColorPickerBuilder(new ArrayList<>(Arrays.asList(colorView, v)));
+                FrameLayout workView = (FrameLayout) setting_colorBunch.getChildAt(i);
+                if(workView.getChildAt(0).getVisibility() == View.VISIBLE){
+                    MyColorPickerDialog.Builder builder = makeColorPickerBuilder(new ArrayList<>(Arrays.asList(v)));
                     ColorPickerView colorPickerView = builder.getColorPickerView();
                     colorPickerView.setFlagView(new CustomFlag(getContext(), R.layout.custom_flag));
                     builder.show();
                     break;
                 }
             }
+            //색깔을 다시 선택했으므로 "내맘대로"로 돌아가야 함.
+            settingHelper.setColorCodeSpinnerPosition(0);
         }
         //여기는 color 선택들만 나머지는 위에 else if에 다세용
         else{
             //이전에 체크되어있던 정보들을 저장한다.
             for(int i=0;i<setting_colorBunch.getChildCount();i++){
                 //colorview is colorll (R.id.color1_btn)
-                LinearLayout colorView = (LinearLayout) setting_colorBunch.getChildAt(i);
-                if(colorView.getChildAt(0).getVisibility() == View.VISIBLE){
-                    int color = ((ColorDrawable) colorView.getBackground()).getColor();
+                FrameLayout workView = (FrameLayout) setting_colorBunch.getChildAt(i);
+                if(workView.getChildAt(0).getVisibility() == View.VISIBLE){
+                    int color = ((ColorDrawable) changeColorButton.getBackground()).getColor();
                     String written = editText.getText().toString();
                     integerStringList.set(i,Pair.create(color,written));
+                    ((TextView) workView.getChildAt(1)).setText(written);
                     break;
                 }
             }
             //현재 체크 될 녀석으로 정보를 업데이트하고 기존의 체크된 놈을 체크 해제한다.
             for(int i=0;i<setting_colorBunch.getChildCount();i++){
                 //colorview is colorll (R.id.color1_btn)
-                LinearLayout colorView = (LinearLayout) setting_colorBunch.getChildAt(i);
-                if(id == colorView.getId()){
-                    changeColorButton.setBackgroundColor(((ColorDrawable)colorView.getBackground()).getColor());
-                    colorView.getChildAt(0).setVisibility(View.VISIBLE);
+                FrameLayout workView = (FrameLayout) setting_colorBunch.getChildAt(i);
+                if(id == workView.getId()){
+                    int color = integerStringList.get(i).first;
+                    changeColorButton.setBackgroundColor(color);
+                    workView.getChildAt(0).setVisibility(View.VISIBLE);
                     editText.setText(integerStringList.get(i).second);
                 }
                 else{
-                    colorView.getChildAt(0).setVisibility(View.INVISIBLE);
+                    workView.getChildAt(0).setVisibility(View.INVISIBLE);
                 }
             }
         }
@@ -239,9 +311,9 @@ public class SettingDialog extends Dialog implements View.OnClickListener{
         //마지막에 색과 내용이 바뀐뒤에 다른 색깔로 체크가 안되면 그 정보는 저장이 되지 않으므로 done하고 나서 정보를 다시 저장해 주어야 한다.
         for(int i=0;i<setting_colorBunch.getChildCount();i++){
             //colorview is colorll (R.id.color1_btn)
-            LinearLayout colorView = (LinearLayout) setting_colorBunch.getChildAt(i);
-            if(colorView.getChildAt(0).getVisibility() == View.VISIBLE){
-                int color = ((ColorDrawable) colorView.getBackground()).getColor();
+            FrameLayout workView = (FrameLayout) setting_colorBunch.getChildAt(i);
+            if(workView.getChildAt(0).getVisibility() == View.VISIBLE){
+                int color = ((ColorDrawable) changeColorButton.getBackground()).getColor();
                 String written = editText.getText().toString();
                 integerStringList.set(i,Pair.create(color,written));
                 break;

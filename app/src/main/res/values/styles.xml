@@ -52,4 +52,13 @@
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
     </style>
 
+    <style name="setting_text_style" parent="Widget.AppCompat.TextView">
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">10sp</item>
+        <item name="autoSizeMaxTextSize">@dimen/text_big</item>
+        <item name="autoSizeStepGranularity">1sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+
 </resources>

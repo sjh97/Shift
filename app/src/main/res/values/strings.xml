@@ -19,4 +19,53 @@
         <item>#0b8043</item>
         <item>#d60000</item>
     </string-array>
+
+    <string-array name="colorCodeSet">
+        <item>내맘대로</item>
+        <item>색상코드1</item>
+        <item>색상코드2</item>
+        <item>색상코드3</item>
+        <item>색상코드4</item>
+    </string-array>
+
+    <string-array name="colorCode1">
+        <item>#E96D63</item>
+        <item>#ef946a</item>
+        <item>#F4BA70</item>
+        <item>#cedf7a</item>
+        <item>#7FCA9F</item>
+        <item>#4A789C</item>
+        <item>#df7ace</item>
+    </string-array>
+
+    <string-array name="colorCode2">
+        <item>#A16F6E</item>
+        <item>#E07A5F</item>
+        <item>#F2CC8F</item>
+        <item>#c0d28a</item>
+        <item>#81B29A</item>
+        <item>#9978aa</item>
+        <item>#3D405B</item>
+    </string-array>
+
+    <string-array name="colorCode3">
+        <item>#EF476F</item>
+        <item>#f78456</item>
+        <item>#FFD166</item>
+        <item>#a4eb33</item>
+        <item>#06D6A0</item>
+        <item>#118AB2</item>
+        <item>#073B4C</item>
+    </string-array>
+
+    <string-array name="colorCode4">
+        <item>#FF595E</item>
+        <item>#ff8949</item>
+        <item>#FFCA3A</item>
+        <item>#8AC926</item>
+        <item>#1982C4</item>
+        <item>#6A4C93</item>
+        <item>#c957b2</item>
+    </string-array>
+
 </resources>

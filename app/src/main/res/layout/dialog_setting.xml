@@ -29,6 +29,7 @@
             android:text="설정"
             android:layout_gravity="center_vertical"
             android:fontFamily="@font/cafe24dongdong"
+            android:textColor="@color/black"
             />
     </LinearLayout>
 
@@ -37,6 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_1x"
+        android:layout_marginStart="@dimen/space_1x"
         >
 
         <RelativeLayout
@@ -55,6 +57,7 @@
                     style="@style/CustomTextView_Mid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
                     android:text="근무 형태" />
 
                 <LinearLayout
@@ -66,123 +69,181 @@
                     android:layout_gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <LinearLayout
+                    <FrameLayout
                         android:id="@+id/setting_color_ll_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/text_very_large"
+                        android:layout_height="@dimen/text_very_large"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="4dp"
                         android:layout_marginRight="4dp"
                         android:layout_toLeftOf="@id/setting_color_ll_2"
-                        android:layout_toRightOf="@+id/edit_button"
-                        android:background="@color/pantoneraPink">
+                        android:layout_toRightOf="@+id/edit_button">
 
                         <ImageButton
                             android:id="@+id/setting_color_ib_1"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="#00000000"
-                            android:src="@drawable/ic_baseline_done_24"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/circle_border_free"
+                            android:layout_gravity="center"
+                            android:background="@android:color/transparent"
                             android:visibility="visible" />
-                    </LinearLayout>
 
-                    <LinearLayout
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            style="@style/setting_text_style"
+                            android:text="D"/>
+
+                    </FrameLayout>
+
+                    <FrameLayout
                         android:id="@+id/setting_color_ll_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/text_very_large"
+                        android:layout_height="@dimen/text_very_large"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center_vertical"
                         android:layout_marginRight="4dp"
-                        android:layout_toLeftOf="@+id/setting_color_ll_3"
-                        android:background="@color/pantoneraBlue">
+                        android:layout_toLeftOf="@+id/setting_color_ll_3">
 
                         <ImageButton
                             android:id="@+id/setting_color_ib_2"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="#00000000"
-                            android:src="@drawable/ic_baseline_done_24"
+                            android:background="@drawable/circle_border_free"
                             android:visibility="invisible" />
-                    </LinearLayout>
 
-                    <LinearLayout
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            style="@style/setting_text_style"
+                            android:text="E"/>
+                    </FrameLayout>
+
+                    <FrameLayout
                         android:id="@+id/setting_color_ll_3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/text_very_large"
+                        android:layout_height="@dimen/text_very_large"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center_vertical"
                         android:layout_marginRight="4dp"
-                        android:layout_toLeftOf="@+id/setting_color_ll_4"
-                        android:background="@color/pantoneraGreen">
+                        android:layout_toLeftOf="@+id/setting_color_ll_4">
 
                         <ImageButton
                             android:id="@+id/setting_color_ib_3"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="#00000000"
-                            android:src="@drawable/ic_baseline_done_24"
+                            android:src="@drawable/circle_border_free"
                             android:visibility="invisible" />
-                    </LinearLayout>
 
-                    <LinearLayout
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            style="@style/setting_text_style"
+                            android:text="N"/>
+                    </FrameLayout>
+
+                    <FrameLayout
                         android:id="@+id/setting_color_ll_4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/text_very_large"
+                        android:layout_height="@dimen/text_very_large"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center_vertical"
                         android:layout_marginRight="4dp"
-                        android:layout_toLeftOf="@+id/setting_color_ll_5"
-                        android:background="@color/pantoneraWheat">
+                        android:layout_toLeftOf="@+id/setting_color_ll_5">
 
                         <ImageButton
                             android:id="@+id/setting_color_ib_4"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="#00000000"
-                            android:src="@drawable/ic_baseline_done_24"
+                            android:src="@drawable/circle_border_free"
                             android:visibility="invisible" />
-                    </LinearLayout>
 
-                    <LinearLayout
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            style="@style/setting_text_style"
+                            android:text="S"/>
+                    </FrameLayout>
+
+                    <FrameLayout
                         android:id="@+id/setting_color_ll_5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/text_very_large"
+                        android:layout_height="@dimen/text_very_large"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginRight="4dp"
-                        android:layout_toLeftOf="@+id/change_color_tv"
-                        android:background="@color/pantoneraRose">
+                        android:layout_marginRight="4dp">
 
                         <ImageButton
                             android:id="@+id/setting_color_ib_5"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="#00000000"
-                            android:src="@drawable/ic_baseline_done_24"
+                            android:src="@drawable/circle_border_free"
                             android:visibility="invisible" />
 
-                    </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            style="@style/setting_text_style"
+                            android:text="Off"/>
 
-                    <LinearLayout
+                    </FrameLayout>
+
+                    <FrameLayout
                         android:id="@+id/setting_color_ll_6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/text_very_large"
+                        android:layout_height="@dimen/text_very_large"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginRight="4dp"
-                        android:layout_toLeftOf="@+id/change_color_tv"
-                        android:background="@color/pantoneraYellow">
+                        android:layout_marginRight="4dp">
 
                         <ImageButton
                             android:id="@+id/setting_color_ib_6"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="#00000000"
-                            android:src="@drawable/ic_baseline_done_24"
+                            android:src="@drawable/circle_border_free"
                             android:visibility="invisible" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            style="@style/setting_text_style"
+                            android:text="반"/>
 
-                    </LinearLayout>
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/setting_color_ll_7"
+                        android:layout_width="@dimen/text_very_large"
+                        android:layout_height="@dimen/text_very_large"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="4dp">
+
+                        <ImageButton
+                            android:id="@+id/setting_color_ib_7"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#00000000"
+                            android:src="@drawable/circle_border_free"
+                            android:visibility="invisible" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            style="@style/setting_text_style"
+                            android:text="연"/>
+
+                    </FrameLayout>
 
 
 
@@ -194,13 +255,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/setting_colorBunch_ll"
-                android:layout_marginStart="@dimen/space_1x"
                 android:layout_marginTop="@dimen/space_1x"
                 android:layout_marginEnd="@dimen/space_1x"
                 android:layout_marginBottom="@dimen/space_1x"
                 android:background="@drawable/round_border_black"
-                android:padding="@dimen/space_1x"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="@dimen/space_1x">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -210,18 +270,19 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="근무명 : "
                         android:layout_gravity="center_vertical"
-                        android:textSize="@dimen/text_big"
-                        />
+                        android:text="근무명 : "
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_big" />
 
                     <EditText
                         android:id="@+id/setting_edit_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textSize="@dimen/text_big"
-                        android:hint="입력하세요" />
+                        android:hint="입력하세요"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_big" />
 
                 </LinearLayout>
 
@@ -230,23 +291,22 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:paddingTop="@dimen/day_text_padding"
-                    android:paddingBottom="@dimen/day_text_padding"
-                    >
+                    android:paddingBottom="@dimen/day_text_padding">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="색상 : "
                         android:layout_gravity="center_vertical"
-                        android:textSize="@dimen/text_big"
-                        />
+                        android:text="색상 : "
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_big" />
 
                     <LinearLayout
-                        android:layout_marginStart="@dimen/space_1x"
                         android:id="@+id/setting_color_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/space_1x"
                         android:layout_marginRight="4dp"
                         android:background="@color/pantoneraPink"
                         android:orientation="horizontal">
@@ -259,6 +319,160 @@
                             android:visibility="invisible" />
 
                     </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="@dimen/day_text_padding"
+                    android:paddingBottom="@dimen/day_text_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="한번에 ? : "
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_big" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/space_1x"
+                        android:layout_marginRight="4dp"
+                        android:orientation="horizontal">
+
+                        <Spinner
+                            android:id="@+id/setting_colorCode_spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="10dp" />
+
+                        <LinearLayout
+                            android:id="@+id/setting_colorCode_preview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="@color/pantoneraPink"
+                                android:orientation="horizontal">
+
+                                <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="#00000000"
+                                    android:src="@drawable/ic_baseline_done_24"
+                                    android:visibility="invisible" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="@color/pantoneraPink"
+                                android:orientation="horizontal">
+
+                                <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="#00000000"
+                                    android:src="@drawable/ic_baseline_done_24"
+                                    android:visibility="invisible" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="@color/pantoneraPink"
+                                android:orientation="horizontal">
+
+                                <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="#00000000"
+                                    android:src="@drawable/ic_baseline_done_24"
+                                    android:visibility="invisible" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="@color/pantoneraPink"
+                                android:orientation="horizontal">
+
+                                <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="#00000000"
+                                    android:src="@drawable/ic_baseline_done_24"
+                                    android:visibility="invisible" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="@color/pantoneraPink"
+                                android:orientation="horizontal">
+
+                                <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="#00000000"
+                                    android:src="@drawable/ic_baseline_done_24"
+                                    android:visibility="invisible" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="@color/pantoneraPink"
+                                android:orientation="horizontal">
+
+                                <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="#00000000"
+                                    android:src="@drawable/ic_baseline_done_24"
+                                    android:visibility="invisible" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="@color/pantoneraPink"
+                                android:orientation="horizontal">
+
+                                <ImageButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="#00000000"
+                                    android:src="@drawable/ic_baseline_done_24"
+                                    android:visibility="invisible" />
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
 
                 </LinearLayout>
 
@@ -275,12 +489,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_1x"
+        android:layout_marginStart="@dimen/space_1x"
         >
 
         <TextView
             android:id="@+id/setting_sync_tv"
             style="@style/CustomTextView_large_center"
-            android:text="캘린더 동기화" />
+            android:text="캘린더 동기화"
+            android:textColor="@color/black" />
 
     <LinearLayout
         android:layout_width="wrap_content"

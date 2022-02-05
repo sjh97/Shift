@@ -138,12 +138,13 @@ public class MainActivity extends AppCompatActivity {
                             Pair<Integer,String> after = integerStringList.get(i);
                             Log.d("TEST__","" + "settingButton : " + before.first + " : " + after.first + " : " + (before.first - after.first != 0));
                             Log.d("TEST__","" + "settingButton : " + before.second + " : " + after.second + " : " + (!before.second.replace(after.second,"").equals("")));
-                            if((before.first - after.first != 0) || !before.second.replace(after.second,"").equals("")){
+                            if(!before.second.replace(after.second,"").equals("")){
                                 isDiff = true;
                                 break;
                             }
                         }
-                        if(settingHelper.isExport() && isDiff)
+                        boolean restart = (settingHelper.getBeforeSyncDayContentList().size() == 0) && settingHelper.isExport();
+                        if((settingHelper.isExport() && isDiff) || restart)
                             googlePlayService.getResultsFromApi(2);
                     }
                 });
