@@ -23,6 +23,8 @@
     <color name="default_selection_bar_month_title_text_color">#c9cacd</color>
     <color name="default_calendar_head_background_color">#F2F2F2</color>
 
+    <color name="default_calendar_content_color">@android:color/white</color>
+
     <color name="black">#000000</color>
     <color name="gray">#91959b</color>
     <color name="white">#c9cacd</color>

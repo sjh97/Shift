@@ -1,9 +1,13 @@
 package com.example.shift.cosmocalendar.adapter.viewholder;
 
 import android.content.res.Resources;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -13,6 +17,7 @@ import androidx.core.content.ContextCompat;
 import com.example.shift.Dialog.ColorDialog;
 import com.example.shift.Dialog.DayEventDialog;
 import com.example.shift.R;
+import com.example.shift.Utils.SettingHelper;
 import com.example.shift.cosmocalendar.adapter.SyncDataAdapter;
 import com.example.shift.cosmocalendar.model.Day;
 import com.example.shift.cosmocalendar.selection.BaseSelectionManager;
@@ -50,6 +55,52 @@ public class DayHolder extends BaseDayHolder {
         String key = "selectedDays";
         dayContent_saving = new DayContent();
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    }
+
+    public void setColorWithDrawable(View view, int color, int state){
+        Drawable roundDrawable;
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+
+        int margin = Math.round(view.getContext().getResources().getDimension(R.dimen.day_text_padding));
+        switch (state){
+            case DayContent.ALONE :
+                roundDrawable = view.getContext().getResources().getDrawable(R.drawable.round_border_for_daytext);
+                layoutParams.setMargins(margin,0,margin,margin);
+                break;
+            case DayContent.START :
+                roundDrawable = view.getContext().getResources().getDrawable(R.drawable.round_border_for_daytext_start);
+                layoutParams.setMargins(margin,0,0,margin);
+                break;
+            case DayContent.KEEP :
+                roundDrawable = view.getContext().getResources().getDrawable(R.drawable.round_border_for_daytext);
+                layoutParams.setMargins(0,0,0,margin);
+                break;
+            case DayContent.END :
+                roundDrawable = view.getContext().getResources().getDrawable(R.drawable.round_border_for_daytext_end);
+                layoutParams.setMargins(0,0,margin,margin);
+                break;
+            default:
+                roundDrawable = view.getContext().getResources().getDrawable(R.drawable.round_border_for_daytext);
+                layoutParams.setMargins(margin,0,margin,margin);
+                break;
+        }
+        if(state != DayContent.KEEP){
+            roundDrawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+            if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                view.setBackgroundDrawable(roundDrawable);
+            } else {
+                view.setBackground(roundDrawable);
+            }
+        }
+        else{
+            view.setBackgroundColor(color);
+        }
+        if(state == DayContent.ALONE || state == DayContent.START)
+            ((TextView) view).setTextColor(view.getContext().getResources().getColor(R.color.default_calendar_content_color));
+        else
+            ((TextView) view).setTextColor(color);
+        view.setLayoutParams(layoutParams);
     }
 
     public void bind(Day day, BaseSelectionManager selectionManager) {
@@ -63,7 +114,7 @@ public class DayHolder extends BaseDayHolder {
         }
         DayContent dayContent = day.getDayContent();
         if(dayContent != null){
-            ctvText.setBackgroundColor(dayContent.getContentColor());
+            setColorWithDrawable(ctvText, dayContent.getContentColor(),day.getDayContent().getContentState());
             ctvText.setText(dayContent.getContentString());
         }
 
@@ -180,8 +231,11 @@ public class DayHolder extends BaseDayHolder {
         int color = (dayContent != null) ? dayContent.getContentColor() : backColor;
         String content_string = (dayContent != null) ? dayContent.getContentString() : "";
         llDay.setBackgroundColor(backColor);
-        ctvText.setBackgroundColor(color);
+        int state = (dayContent != null) ? dayContent.getContentState() : DayContent.ALONE;
+        setColorWithDrawable(ctvText, color, state);
+//        ctvText.setBackgroundColor(color);
         ctvText.setText(content_string);
+
     }
 
     private void addConnectedDayIcon(boolean isSelected){

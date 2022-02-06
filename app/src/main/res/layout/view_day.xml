@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="@dimen/day_text_padding"
         android:background= "@color/default_calendar_background_color"
         >
 
@@ -18,6 +17,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginBottom="@dimen/space_2x"
+            android:paddingTop="@dimen/day_text_padding"
+            android:paddingStart="@dimen/day_text_padding"
+            android:paddingEnd="@dimen/day_text_padding"
             android:weightSum="2">
 
             <TextView
@@ -39,9 +41,11 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/day_content_wrapper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:weightSum="5"
+
             android:orientation="vertical">
 
             <TextView
@@ -54,13 +58,13 @@
                 android:layout_height="0dp"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:padding="2dp"
                 android:layout_gravity="center"
-                android:textColor="@color/default_calendar_background_color"
+                android:textColor="@color/default_calendar_content_color"
                 />
             <ListView
-                android:layout_marginTop="2dp"
                 android:id="@+id/listview_day_list"
+                android:padding="@dimen/day_text_padding"
+                android:layout_marginTop="2dp"
                 android:layout_weight="3"
                 android:layout_width="match_parent"
                 android:scrollbars="none"

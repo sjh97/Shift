@@ -1,5 +1,6 @@
 package com.example.shift.cosmocalendar.adapter;
 
+import android.util.Log;
 import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.shift.cosmocalendar.adapter.viewholder.MonthHolder;
@@ -188,7 +189,9 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthHolder> {
         }
         for (Month month : months){
             //추가되거나 변경될 때
-            for(Day day : month.getDays()){
+//            for(Day day : month.getDays()){
+            for(int i=0; i < month.getDays().size(); i++){
+                Day day = month.getDays().get(i);
                 String dayDate = simpleDateFormat.format(day.getCalendar().getTime());
                 for(DayContent selected : dayContents){
                     String selectedDate = simpleDateFormat.format(selected.getContentDate());

@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
 //                        dayContent_saving.setSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color);
-                        dayContent_saving.setSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color,id);
+                        dayContent_saving.setSelectedDaysPref(calendarView.getContext(), key, selectedDays, written, color, id);
                         calendarView.setDayContents(dayContent_saving.getSelectedDaysPref(calendarView.getContext(), key));
                         if(settingHelper.isExport())
                             googlePlayService.getResultsFromApi(2);
