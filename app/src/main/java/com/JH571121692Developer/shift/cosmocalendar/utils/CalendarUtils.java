@@ -1,4 +1,4 @@
-package com.example.shift.cosmocalendar.utils;
+package com.JH571121692Developer.shift.cosmocalendar.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -6,14 +6,14 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.example.shift.cosmocalendar.model.Day;
-import com.example.shift.cosmocalendar.model.DayOfWeek;
-import com.example.shift.cosmocalendar.model.Month;
-import com.example.shift.cosmocalendar.selection.selectionbar.SelectionBarContentItem;
-import com.example.shift.cosmocalendar.selection.selectionbar.SelectionBarItem;
-import com.example.shift.cosmocalendar.selection.selectionbar.SelectionBarTitleItem;
-import com.example.shift.cosmocalendar.settings.SettingsManager;
-import com.example.shift.cosmocalendar.settings.lists.DisabledDaysCriteria;
+import com.JH571121692Developer.shift.cosmocalendar.model.Day;
+import com.JH571121692Developer.shift.cosmocalendar.model.DayOfWeek;
+import com.JH571121692Developer.shift.cosmocalendar.model.Month;
+import com.JH571121692Developer.shift.cosmocalendar.selection.selectionbar.SelectionBarContentItem;
+import com.JH571121692Developer.shift.cosmocalendar.selection.selectionbar.SelectionBarItem;
+import com.JH571121692Developer.shift.cosmocalendar.selection.selectionbar.SelectionBarTitleItem;
+import com.JH571121692Developer.shift.cosmocalendar.settings.SettingsManager;
+import com.JH571121692Developer.shift.cosmocalendar.settings.lists.DisabledDaysCriteria;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -178,6 +178,13 @@ public final class CalendarUtils {
 
         if (settingsManager.getConnectedDaysManager().isAnyConnectedDays()) {
             settingsManager.getConnectedDaysManager().applySettingsToDay(day);
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for(DayContent dayContent : settingsManager.getDayContents()) {
+            String contentString = simpleDateFormat.format(dayContent.getContentDate());
+            String targetString = simpleDateFormat.format(day.getCalendar().getTime());
+            if(contentString.equals(targetString))
+                day.setDayContent(dayContent);
         }
     }
 
