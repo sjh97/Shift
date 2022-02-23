@@ -208,7 +208,7 @@
 
     </FrameLayout>
 
-    <com.example.shift.cosmocalendar.view.CalendarView
+    <com.JH571121692Developer.shift.cosmocalendar.view.CalendarView
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

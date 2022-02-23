@@ -5,11 +5,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/default_calendar_head_background_color"
-        android:orientation="horizontal"
         android:paddingTop="@dimen/space_1x"
         android:paddingBottom="@dimen/space_1x"
         >
@@ -18,20 +17,30 @@
             android:id="@+id/setting_done_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_chevron_left_gray"
+            android:layout_centerVertical="true"
             android:background="@android:color/transparent"
-            android:layout_gravity="center_vertical"
-            />
+            android:src="@drawable/ic_chevron_left_gray" />
 
         <TextView
             android:id="@+id/fl_navigation_buttons_bar"
             style="@style/CustomTextView_VeryLarge"
             android:text="설정"
-            android:layout_gravity="center_vertical"
+            android:layout_centerVertical="true"
             android:fontFamily="@font/cafe24dongdong"
             android:textColor="@color/black"
+            android:layout_toRightOf="@+id/setting_done_button"
             />
-    </LinearLayout>
+
+        <ImageView
+            android:id="@+id/setting_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/space_1x"
+            android:src="@drawable/ic_baseline_info_24" />
+
+    </RelativeLayout>
 
 
     <RelativeLayout
@@ -333,7 +342,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:text="한번에 ? : "
+                        android:text="색조합 : "
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_big" />
 
@@ -480,8 +489,6 @@
 
         </RelativeLayout>
 
-
-
     </RelativeLayout>
 
 
@@ -532,6 +539,43 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_1x"
+        android:layout_marginStart="@dimen/space_1x"
+        >
+
+        <TextView
+            android:id="@+id/setting_connect_tv"
+            style="@style/CustomTextView_large_center"
+            android:text="연속 근무 표시"
+            android:textColor="@color/black" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/setting_connect_tv"
+            android:orientation="horizontal"
+            android:layout_alignParentLeft="true">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <Switch
+                    android:id="@+id/setting_connect_sw"
+                    android:text="연결하기"
+                    android:checked="true"
+                    style="@style/CustomSwitch_Mid"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </RelativeLayout>
 
